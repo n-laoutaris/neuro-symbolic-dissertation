@@ -1,40 +1,10 @@
-# Top-level .gitignore for the Dissertation workspace
-# Strategy: ignore almost everything, then whitelist the specific notebooks
-# and directories you asked to keep. This avoids accidentally checking in
-# large or temporary files while allowing the requested content.
+# PyVis JavaScript libraries
+lib/
 
-# Ignore everything by default
-*
+# Secrets
+.env
 
-# But don't ignore directory structure — so we can whitelist specific paths
-!*/
-
-# Always keep this file tracked
-!.gitignore
-
-# Keep the two notebooks in the repo root (names include spaces)
-!Citizen Graph Notebook.ipynb
-!Dissertation Notebook.ipynb
-
-# Whitelist specific directories and all their subcontents (exact names)
-!Citizens/
-!Citizens/**
-
-!Good results/
-!Good results/**
-
-!Precondition documents/
-!Precondition documents/**
-
-!Prompts/
-!Prompts/**
-
-!Results/
-!Results/**
-
-# Recommended global ignores for OS/editor artifacts and checkpoints
-# These will still be ignored even if they appear inside whitelisted folders
-# because these patterns are matched after the whitelist entries.
+# Global ignores for OS/editor artifacts and checkpoints
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -42,18 +12,16 @@ __pycache__/
 *.py[cod]
 *.so
 
-# Jupyter notebook checkpoints (often created automatically)
+# Jupyter notebook checkpoints 
 .ipynb_checkpoints/
 
 # VS Code workspace files
 .vscode/
 
-# Node/npm artifacts (if any appear in the workspace)
+# Node/npm artifacts 
 node_modules/
 npm-debug.log*
 
-# OneDrive specific files (optional)
+# OneDrive specific files 
 ~$*
 
-# If you want to also keep other folders (e.g., `lib/` or `Older Versions/`),
-# add them above using the same pattern `!path/` and `!path/**`.
