@@ -1,6 +1,9 @@
 # PyVis JavaScript libraries
 lib/
 
+# Temporary directory
+Results/
+
 # Secrets
 .env
 
