@@ -1,0 +1,246 @@
+[
+  {
+    "shape_name": "citizenship_shape",
+    "desc": "The student must be a citizen of Greece or another European Union country.",
+    "concepts": [
+      {
+        "name": "applicant_citizenship",
+        "related_paths": [
+          {
+            "path": [
+              "citizenshipCountry"
+            ],
+            "datatype": "xsd:string"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "shape_name": "academic_enrollment_shape",
+    "desc": "The student must be enrolled in a Higher Education Institution (AEI) and possess a valid academic ID.",
+    "concepts": [
+      {
+        "name": "has_valid_academic_id",
+        "related_paths": [
+          {
+            "path": [
+              "hasEducation",
+              "hasValidAcademicID"
+            ],
+            "datatype": "xsd:boolean"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "shape_name": "academic_performance_shape",
+    "desc": "The student must have successfully passed exams in at least half of the courses of the preceding academic year for which the allowance is requested.",
+    "concepts": [
+      {
+        "name": "passed_courses_count",
+        "related_paths": [
+          {
+            "path": [
+              "hasEducation",
+              "passedCoursesCount"
+            ],
+            "datatype": "xsd:integer"
+          }
+        ]
+      },
+      {
+        "name": "total_courses_count",
+        "related_paths": [
+          {
+            "path": [
+              "hasEducation",
+              "totalCoursesCount"
+            ],
+            "datatype": "xsd:integer"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "shape_name": "family_income_shape",
+    "desc": "The annual family income of the previous year must not exceed \u20ac30,000. This limit is increased by \u20ac3,000 for each dependent child after the first.",
+    "concepts": [
+      {
+        "name": "total_family_income",
+        "related_paths": [
+          {
+            "path": [
+              "hasIncome",
+              "amount"
+            ],
+            "datatype": "xsd:decimal"
+          },
+          {
+            "path": [
+              "hasParent",
+              "hasIncome",
+              "amount"
+            ],
+            "datatype": "xsd:decimal"
+          }
+        ]
+      },
+      {
+        "name": "is_dependent_child_of_parents",
+        "related_paths": [
+          {
+            "path": [
+              "hasParent",
+              "hasChild",
+              "isDependent"
+            ],
+            "datatype": "xsd:boolean"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "shape_name": "residence_location_shape",
+    "desc": "The student must reside in a rented property due to their studies in a city different from their family's main residence. The lease must be valid for at least six months.",
+    "concepts": [
+      {
+        "name": "student_residence_type",
+        "related_paths": [
+          {
+            "path": [
+              "hasCurrentResidence",
+              "residenceType"
+            ],
+            "datatype": "xsd:string"
+          }
+        ]
+      },
+      {
+        "name": "student_residence_city",
+        "related_paths": [
+          {
+            "path": [
+              "hasCurrentResidence",
+              "locatedIn"
+            ],
+            "datatype": "URI"
+          }
+        ]
+      },
+      {
+        "name": "family_residence_city",
+        "related_paths": [
+          {
+            "path": [
+              "hasFamilyResidence",
+              "locatedIn"
+            ],
+            "datatype": "URI"
+          }
+        ]
+      },
+      {
+        "name": "lease_start_date",
+        "related_paths": [
+          {
+            "path": [
+              "hasCurrentResidence",
+              "leaseStartDate"
+            ],
+            "datatype": "xsd:date"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "shape_name": "no_owned_residence_in_study_city_shape",
+    "desc": "Neither the student nor their parents may have full ownership or usufruct of a residence in the city of study.",
+    "concepts": [
+      {
+        "name": "city_of_study",
+        "related_paths": [
+          {
+            "path": [
+              "hasEducation",
+              "isEnrolledAt"
+            ],
+            "datatype": "URI"
+          }
+        ]
+      },
+      {
+        "name": "location_of_family_owned_properties",
+        "related_paths": [
+          {
+            "path": [
+              "ownsRealEstate",
+              "propertyLocation"
+            ],
+            "datatype": "URI"
+          },
+          {
+            "path": [
+              "hasParent",
+              "ownsRealEstate",
+              "propertyLocation"
+            ],
+            "datatype": "URI"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "shape_name": "total_property_area_shape",
+    "desc": "The total real estate property (owner-occupied or rented out) owned by the student or their parents must not exceed 200 sq.m. This limit excludes properties located in municipalities with a population of less than 3,000.",
+    "concepts": [
+      {
+        "name": "family_property_area",
+        "related_paths": [
+          {
+            "path": [
+              "ownsRealEstate",
+              "propertyAreaM2"
+            ],
+            "datatype": "xsd:decimal"
+          },
+          {
+            "path": [
+              "hasParent",
+              "ownsRealEstate",
+              "propertyAreaM2"
+            ],
+            "datatype": "xsd:decimal"
+          }
+        ]
+      },
+      {
+        "name": "family_property_location_population",
+        "related_paths": [
+          {
+            "path": [
+              "ownsRealEstate",
+              "propertyLocation",
+              "municipalityPopulation"
+            ],
+            "datatype": "xsd:integer"
+          },
+          {
+            "path": [
+              "hasParent",
+              "ownsRealEstate",
+              "propertyLocation",
+              "municipalityPopulation"
+            ],
+            "datatype": "xsd:integer"
+          }
+        ]
+      }
+    ]
+  }
+]

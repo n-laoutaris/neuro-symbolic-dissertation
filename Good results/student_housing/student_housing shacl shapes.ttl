@@ -1,0 +1,219 @@
+@prefix : <http://example.org/schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# =================================================================
+# Shape: citizenship_shape
+# Rule: The student must be a citizen of Greece or another EU country.
+# Strategy: Property Shape (sh:in)
+# =================================================================
+:citizenship_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:property [
+        sh:path :citizenshipCountry ;
+        sh:minCount 1 ;
+        sh:message "Applicant's citizenship must be specified and be Greece or another EU country." ;
+        sh:in ( "GR" "FR" "DE" "IT" "ES" "PT" "NL" "BE" "LU" "IE" "DK" "SE" "FI" "AT" "MT" "CY" "CZ" "EE" "HU" "LV" "LT" "PL" "SK" "SI" "BG" "RO" "HR" ) ;
+    ] .
+
+# =================================================================
+# Shape: academic_enrollment_shape
+# Rule: The student must be enrolled and have a valid academic ID.
+# Strategy: Property Shape (sh:hasValue)
+# =================================================================
+:academic_enrollment_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:property [
+        sh:path ( :hasEducation :hasValidAcademicID ) ;
+        sh:hasValue true ;
+        sh:minCount 1 ; # Ensures the path exists and has a value
+        sh:message "The applicant must have a valid academic ID." ;
+    ] .
+
+# =================================================================
+# Shape: academic_performance_shape
+# Rule: The student must have passed at least half of their courses.
+# Strategy: SPARQL Constraint (Comparison between two paths)
+# =================================================================
+:academic_performance_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "The student has not passed at least half of the courses from the preceding academic year." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                ?this :hasEducation ?edu .
+                ?edu :passedCoursesCount ?passed_courses_count .
+                ?edu :totalCoursesCount ?total_courses_count .
+                
+                # Fails if passed courses are less than half of total courses.
+                FILTER( (?passed_courses_count * 2) < ?total_courses_count )
+            }
+        """ ;
+    ] .
+
+# =================================================================
+# Shape: family_income_shape
+# Rule: Annual family income must not exceed a threshold adjusted for dependent children.
+# Strategy: SPARQL Constraint (Aggregation, Conditional Math)
+# =================================================================
+:family_income_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "The annual family income exceeds the limit of €30,000, adjusted for dependent children." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                # Subquery 1: Calculate total family income
+                {
+                    SELECT ?this (SUM(?val) AS ?totalIncome) WHERE {
+                        {
+                            ?this :hasIncome ?inc . ?inc :amount ?val .
+                        }
+                        UNION
+                        {
+                            ?this :hasParent ?p . ?p :hasIncome ?p_inc . ?p_inc :amount ?val .
+                        }
+                    } GROUP BY ?this
+                }
+
+                # Subquery 2: Count dependent children (optional, so it doesn't fail if no parents are listed)
+                OPTIONAL {
+                    {
+                        SELECT ?this (COUNT(DISTINCT ?child) AS ?depChildCountResult) WHERE {
+                            ?this :hasParent ?parent .
+                            ?parent :hasChild ?child .
+                            ?child :isDependent true .
+                        } GROUP BY ?this
+                    }
+                }
+
+                # Calculate the income limit
+                BIND(COALESCE(?depChildCountResult, 0) AS ?depChildCount)
+                BIND(30000 + (3000 * (IF(?depChildCount > 1, ?depChildCount - 1, 0))) AS ?limit)
+                
+                # Check for violation
+                FILTER(?totalIncome > ?limit)
+            }
+        """ ;
+    ] .
+
+# =================================================================
+# Shape: residence_location_shape
+# Rule: Must rent in a different city than family, with a lease of at least 6 months.
+# Strategy: SPARQL Constraint (Multiple conditions, URI comparison, Date math)
+# =================================================================
+:residence_location_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "The student must reside in a rented property in a city different from their family's main residence, and the lease must be valid for at least six months." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                ?this :hasCurrentResidence ?currentRes .
+                ?currentRes :residenceType ?student_residence_type .
+                ?currentRes :locatedIn ?student_residence_city .
+                ?currentRes :leaseStartDate ?lease_start_date .
+                
+                ?this :hasFamilyResidence ?familyRes .
+                ?familyRes :locatedIn ?family_residence_city .
+
+                # Date 6 months ago from now
+                BIND( (NOW() - "P6M"^^xsd:duration) AS ?sixMonthsAgo )
+                
+                # Fails if any condition is not met:
+                # 1. Residence is not 'Rented'
+                # 2. Student city is the same as family city
+                # 3. Lease started less than 6 months ago
+                FILTER (
+                    LCASE(?student_residence_type) != "rented" ||
+                    ?student_residence_city = ?family_residence_city ||
+                    ?lease_start_date > ?sixMonthsAgo
+                )
+            }
+        """ ;
+    ] .
+
+# =================================================================
+# Shape: no_owned_residence_in_study_city_shape
+# Rule: Neither student nor parents may own a residence in the city of study.
+# Strategy: SPARQL Constraint (Existence check, URI comparison)
+# =================================================================
+:no_owned_residence_in_study_city_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "The student or their parents own a residence in the city of study." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                # Path to get the city of study
+                ?this :hasEducation ?edu .
+                ?edu :isEnrolledAt ?city_of_study .
+
+                # Fails if a property owned by the family exists in that city
+                FILTER EXISTS {
+                    {
+                        # Property owned by the applicant
+                        ?this :ownsRealEstate ?prop .
+                        ?prop :propertyLocation ?city_of_study .
+                    }
+                    UNION
+                    {
+                        # Property owned by a parent
+                        ?this :hasParent ?parent .
+                        ?parent :ownsRealEstate ?prop .
+                        ?prop :propertyLocation ?city_of_study .
+                    }
+                }
+            }
+        """ ;
+    ] .
+
+# =================================================================
+# Shape: total_property_area_shape
+# Rule: Total family property area must not exceed 200 sq.m., excluding small municipalities.
+# Strategy: SPARQL Constraint (Conditional Aggregation)
+# =================================================================
+:total_property_area_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "The total real estate property owned by the family (in municipalities >3,000 population) exceeds 200 sq.m." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                {
+                    SELECT ?this (SUM(?area) as ?totalArea)
+                    WHERE {
+                        # Identify the owner: either the applicant or a parent
+                        { BIND(?this AS ?owner) }
+                        UNION
+                        { ?this :hasParent ?owner . }
+
+                        # Get properties of the owner that are in municipalities with >= 3000 population
+                        ?owner :ownsRealEstate ?prop .
+                        ?prop :propertyAreaM2 ?area .
+                        ?prop :propertyLocation ?loc .
+                        ?loc :municipalityPopulation ?pop .
+                        FILTER(?pop >= 3000)
+                    }
+                    GROUP BY ?this
+                }
+                # Check for violation
+                FILTER(?totalArea > 200)
+            }
+        """ ;
+    ] .

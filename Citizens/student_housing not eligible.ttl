@@ -14,7 +14,7 @@ ex:ThessalonikiMunicipality a :Municipality ;
     :municipalityPopulation 315196 .
 
 ex:TinyVillageMunicipality a :Municipality ;
-    :municipalityPopulation 500 .
+    :municipalityPopulation 5000 .
 
 # ==========================================
 # 2. THE APPLICANT (Katerina)
@@ -93,7 +93,7 @@ ex:MomIncome a :IncomeRecord ;
 
 ex:KaterinaEduRecord a :EducationRecord ;
     :isEnrolledAt ex:AthensMunicipality ;
-    :hasValidAcademicID false ;
+    :hasValidAcademicID true ;
     :passedCoursesCount 6 ;
     :totalCoursesCount 10 .
 

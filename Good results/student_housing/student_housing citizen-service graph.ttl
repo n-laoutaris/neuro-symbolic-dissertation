@@ -1,0 +1,175 @@
+@prefix cccev: <http://data.europa.eu/m8g/> .
+@prefix cpsv: <http://purl.org/vocab/cpsv#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix ex: <http://example.org/> .
+@prefix ns1: <http://example.org/schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:Student_Housing_Allowance a cpsv:PublicService ;
+    cpsv:holdsRequirement ex:academic_enrollment_condition,
+        ex:academic_performance_condition,
+        ex:citizenship_condition,
+        ex:family_income_condition,
+        ex:no_owned_residence_in_study_city_condition,
+        ex:residence_location_condition,
+        ex:total_property_area_condition .
+
+ex:FamilyHome a ns1:Residence ;
+    ns1:locatedIn ex:ThessalonikiMunicipality ;
+    ns1:residenceType "Owned" .
+
+ex:academic_enrollment_condition a cccev:Constraint ;
+    cccev:constrains ex:has_valid_academic_id ;
+    dct:description "The student must be enrolled in a Higher Education Institution (AEI) and possess a valid academic ID." .
+
+ex:academic_performance_condition a cccev:Constraint ;
+    cccev:constrains ex:passed_courses_count,
+        ex:total_courses_count ;
+    dct:description "The student must have successfully passed exams in at least half of the courses of the preceding academic year for which the allowance is requested." .
+
+ex:applicant_citizenship a cccev:InformationConcept ;
+    ex:mapsTo ex:Katerina .
+
+ex:citizenship_condition a cccev:Constraint ;
+    cccev:constrains ex:applicant_citizenship ;
+    dct:description "The student must be a citizen of Greece or another European Union country." .
+
+ex:city_of_study a cccev:InformationConcept ;
+    ex:mapsTo ex:AthensMunicipality .
+
+ex:family_income_condition a cccev:Constraint ;
+    cccev:constrains ex:is_dependent_child_of_parents,
+        ex:total_family_income ;
+    dct:description "The annual family income of the previous year must not exceed €30,000. This limit is increased by €3,000 for each dependent child after the first." .
+
+ex:family_property_area a cccev:InformationConcept ;
+    ex:mapsTo ex:DadMainProperty,
+        ex:MomVillageHouse .
+
+ex:family_property_location_population a cccev:InformationConcept ;
+    ex:mapsTo ex:ThessalonikiMunicipality,
+        ex:TinyVillageMunicipality .
+
+ex:family_residence_city a cccev:InformationConcept ;
+    ex:mapsTo ex:ThessalonikiMunicipality .
+
+ex:has_valid_academic_id a cccev:InformationConcept ;
+    ex:mapsTo ex:KaterinaEduRecord .
+
+ex:is_dependent_child_of_parents a cccev:InformationConcept ;
+    ex:mapsTo ex:Katerina,
+        ex:Yannis .
+
+ex:lease_start_date a cccev:InformationConcept ;
+    ex:mapsTo ex:StudentApartment .
+
+ex:location_of_family_owned_properties a cccev:InformationConcept ;
+    ex:mapsTo ex:ThessalonikiMunicipality,
+        ex:TinyVillageMunicipality .
+
+ex:no_owned_residence_in_study_city_condition a cccev:Constraint ;
+    cccev:constrains ex:city_of_study,
+        ex:location_of_family_owned_properties ;
+    dct:description "Neither the student nor their parents may have full ownership or usufruct of a residence in the city of study." .
+
+ex:passed_courses_count a cccev:InformationConcept ;
+    ex:mapsTo ex:KaterinaEduRecord .
+
+ex:residence_location_condition a cccev:Constraint ;
+    cccev:constrains ex:family_residence_city,
+        ex:lease_start_date,
+        ex:student_residence_city,
+        ex:student_residence_type ;
+    dct:description "The student must reside in a rented property due to their studies in a city different from their family's main residence. The lease must be valid for at least six months." .
+
+ex:student_residence_city a cccev:InformationConcept ;
+    ex:mapsTo ex:AthensMunicipality .
+
+ex:student_residence_type a cccev:InformationConcept ;
+    ex:mapsTo ex:StudentApartment .
+
+ex:total_courses_count a cccev:InformationConcept ;
+    ex:mapsTo ex:KaterinaEduRecord .
+
+ex:total_family_income a cccev:InformationConcept ;
+    ex:mapsTo ex:DadIncome,
+        ex:KaterinaIncome,
+        ex:MomIncome .
+
+ex:total_property_area_condition a cccev:Constraint ;
+    cccev:constrains ex:family_property_area,
+        ex:family_property_location_population ;
+    dct:description "The total real estate property (owner-occupied or rented out) owned by the student or their parents must not exceed 200 sq.m. This limit excludes properties located in municipalities with a population of less than 3,000." .
+
+ex:Dad a ns1:Person ;
+    ns1:birthDate "1970-01-01"^^xsd:date ;
+    ns1:hasChild ex:Katerina,
+        ex:Yannis ;
+    ns1:hasIncome ex:DadIncome ;
+    ns1:ownsRealEstate ex:DadMainProperty .
+
+ex:DadIncome a ns1:IncomeRecord ;
+    ns1:amount 25000.0 ;
+    ns1:incomeYear "2024"^^xsd:gYear .
+
+ex:DadMainProperty a ns1:RealEstateProperty ;
+    ns1:propertyAreaM2 150.0 ;
+    ns1:propertyLocation ex:ThessalonikiMunicipality .
+
+ex:KaterinaIncome a ns1:IncomeRecord ;
+    ns1:amount 0.0 ;
+    ns1:incomeYear "2024"^^xsd:gYear .
+
+ex:Mom a ns1:Person ;
+    ns1:birthDate "1975-03-15"^^xsd:date ;
+    ns1:hasChild ex:Katerina,
+        ex:Yannis ;
+    ns1:hasIncome ex:MomIncome ;
+    ns1:ownsRealEstate ex:MomVillageHouse .
+
+ex:MomIncome a ns1:IncomeRecord ;
+    ns1:amount 7000.0 ;
+    ns1:incomeYear "2024"^^xsd:gYear .
+
+ex:MomVillageHouse a ns1:RealEstateProperty ;
+    ns1:propertyAreaM2 80.0 ;
+    ns1:propertyLocation ex:TinyVillageMunicipality .
+
+ex:StudentApartment a ns1:Residence ;
+    ns1:leaseStartDate "2024-09-01"^^xsd:date ;
+    ns1:locatedIn ex:AthensMunicipality ;
+    ns1:residenceType "Rented" .
+
+ex:TinyVillageMunicipality a ns1:Municipality ;
+    ns1:municipalityPopulation 500 .
+
+ex:Yannis a ns1:Person ;
+    ns1:birthDate "2015-06-01"^^xsd:date ;
+    ns1:hasParent ex:Dad,
+        ex:Mom ;
+    ns1:isDependent true .
+
+ex:AthensMunicipality a ns1:Municipality ;
+    ns1:municipalityPopulation 664046 .
+
+ex:Katerina a ns1:Applicant,
+        ns1:Person ;
+    ns1:birthDate "2003-05-20"^^xsd:date ;
+    ns1:citizenshipCountry "GR" ;
+    ns1:hasCurrentResidence ex:StudentApartment ;
+    ns1:hasEducation ex:KaterinaEduRecord ;
+    ns1:hasFamilyResidence ex:FamilyHome ;
+    ns1:hasIncome ex:KaterinaIncome ;
+    ns1:hasParent ex:Dad,
+        ex:Mom ;
+    ns1:isDependent true .
+
+ex:KaterinaEduRecord a ns1:EducationRecord ;
+    ns1:hasValidAcademicID true ;
+    ns1:isEnrolledAt ex:AthensMunicipality ;
+    ns1:passedCoursesCount 6 ;
+    ns1:totalCoursesCount 10 .
+
+ex:ThessalonikiMunicipality a ns1:Municipality ;
+    ns1:municipalityPopulation 315196 .
+

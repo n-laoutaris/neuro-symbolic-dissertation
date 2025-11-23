@@ -1,0 +1,57 @@
+@prefix ex: <http://example.org/> .
+@prefix cccev: <http://data.europa.eu/m8g/> .
+@prefix cpsv: <http://purl.org/vocab/cpsv#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:Student_Housing_Allowance a cpsv:PublicService .
+
+ex:Student_Housing_Allowance cpsv:holdsRequirement ex:citizenship_condition .
+ex:citizenship_condition a cccev:Constraint ; dct:description "The student must be a citizen of Greece or another European Union country." .
+ex:citizenship_condition cccev:constrains ex:applicant_citizenship .
+ex:applicant_citizenship a cccev:InformationConcept .
+
+ex:Student_Housing_Allowance cpsv:holdsRequirement ex:academic_enrollment_condition .
+ex:academic_enrollment_condition a cccev:Constraint ; dct:description "The student must be enrolled in a Higher Education Institution (AEI) and possess a valid academic ID." .
+ex:academic_enrollment_condition cccev:constrains ex:has_valid_academic_id .
+ex:has_valid_academic_id a cccev:InformationConcept .
+
+ex:Student_Housing_Allowance cpsv:holdsRequirement ex:academic_performance_condition .
+ex:academic_performance_condition a cccev:Constraint ; dct:description "The student must have successfully passed exams in at least half of the courses of the preceding academic year for which the allowance is requested." .
+ex:academic_performance_condition cccev:constrains ex:passed_courses_count .
+ex:passed_courses_count a cccev:InformationConcept .
+ex:academic_performance_condition cccev:constrains ex:total_courses_count .
+ex:total_courses_count a cccev:InformationConcept .
+
+ex:Student_Housing_Allowance cpsv:holdsRequirement ex:family_income_condition .
+ex:family_income_condition a cccev:Constraint ; dct:description "The annual family income of the previous year must not exceed €30,000. This limit is increased by €3,000 for each dependent child after the first." .
+ex:family_income_condition cccev:constrains ex:total_family_income .
+ex:total_family_income a cccev:InformationConcept .
+ex:family_income_condition cccev:constrains ex:is_dependent_child_of_parents .
+ex:is_dependent_child_of_parents a cccev:InformationConcept .
+
+ex:Student_Housing_Allowance cpsv:holdsRequirement ex:residence_location_condition .
+ex:residence_location_condition a cccev:Constraint ; dct:description "The student must reside in a rented property due to their studies in a city different from their family's main residence. The lease must be valid for at least six months." .
+ex:residence_location_condition cccev:constrains ex:student_residence_type .
+ex:student_residence_type a cccev:InformationConcept .
+ex:residence_location_condition cccev:constrains ex:student_residence_city .
+ex:student_residence_city a cccev:InformationConcept .
+ex:residence_location_condition cccev:constrains ex:family_residence_city .
+ex:family_residence_city a cccev:InformationConcept .
+ex:residence_location_condition cccev:constrains ex:lease_start_date .
+ex:lease_start_date a cccev:InformationConcept .
+
+ex:Student_Housing_Allowance cpsv:holdsRequirement ex:no_owned_residence_in_study_city_condition .
+ex:no_owned_residence_in_study_city_condition a cccev:Constraint ; dct:description "Neither the student nor their parents may have full ownership or usufruct of a residence in the city of study." .
+ex:no_owned_residence_in_study_city_condition cccev:constrains ex:city_of_study .
+ex:city_of_study a cccev:InformationConcept .
+ex:no_owned_residence_in_study_city_condition cccev:constrains ex:location_of_family_owned_properties .
+ex:location_of_family_owned_properties a cccev:InformationConcept .
+
+ex:Student_Housing_Allowance cpsv:holdsRequirement ex:total_property_area_condition .
+ex:total_property_area_condition a cccev:Constraint ; dct:description "The total real estate property (owner-occupied or rented out) owned by the student or their parents must not exceed 200 sq.m. This limit excludes properties located in municipalities with a population of less than 3,000." .
+ex:total_property_area_condition cccev:constrains ex:family_property_area .
+ex:family_property_area a cccev:InformationConcept .
+ex:total_property_area_condition cccev:constrains ex:family_property_location_population .
+ex:family_property_location_population a cccev:InformationConcept .
+

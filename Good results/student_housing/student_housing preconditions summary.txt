@@ -1,0 +1,9 @@
+Title: Student Housing Allowance
+Conditions:
+- The student must be a citizen of Greece or another European Union country.
+- The student must be enrolled in a Higher Education Institution (AEI) and possess a valid academic ID.
+- The student must have successfully passed exams in at least half of the courses of the preceding academic year for which the allowance is requested.
+- The annual family income of the previous year must not exceed €30,000. This limit is increased by €3,000 for each dependent child after the first.
+- The student must reside in a rented property due to their studies in a city different from their family's main residence. The lease must be valid for at least six months.
+- Neither the student nor their parents may have full ownership or usufruct of a residence in the city of study.
+- The total real estate property (owner-occupied or rented out) owned by the student or their parents must not exceed 200 sq.m. This limit excludes properties located in municipalities with a population of less than 3,000.
