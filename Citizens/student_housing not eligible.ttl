@@ -1,0 +1,110 @@
+@prefix : <http://example.org/schema#> .
+@prefix ex: <http://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# ==========================================
+# 1. GEOGRAPHY
+# ==========================================
+
+ex:AthensMunicipality a :Municipality ;
+    :municipalityPopulation 664046 .
+
+ex:ThessalonikiMunicipality a :Municipality ;
+    :municipalityPopulation 315196 .
+
+ex:TinyVillageMunicipality a :Municipality ;
+    :municipalityPopulation 500 .
+
+# ==========================================
+# 2. THE APPLICANT (Katerina)
+# ==========================================
+
+ex:Katerina a :Applicant, :Person ;
+    :citizenshipCountry "GR" ;
+    :birthDate "2003-05-20"^^xsd:date ; # 22 Years old
+    :hasParent ex:Dad, ex:Mom ;
+    
+    # Explicitly marking Katerina as the "First" dependent child is not strictly necessary 
+    # if the logic counts all children, but good for completeness.
+    :isDependent true ; 
+    
+    # Housing & Education
+    :hasCurrentResidence ex:StudentApartment ;
+    :hasFamilyResidence ex:FamilyHome ;
+    :hasEducation ex:KaterinaEduRecord ;
+    :hasIncome ex:KaterinaIncome .
+
+# ==========================================
+# 3. THE FAMILY (Parents + Sibling)
+# ==========================================
+
+ex:Dad a :Person ;
+    :birthDate "1970-01-01"^^xsd:date ;
+    :hasChild ex:Katerina, ex:Yannis ;
+    :hasIncome ex:DadIncome ;
+    :ownsRealEstate ex:DadMainProperty .
+
+ex:Mom a :Person ;
+    :birthDate "1975-03-15"^^xsd:date ;
+    :hasChild ex:Katerina, ex:Yannis ;
+    :hasIncome ex:MomIncome ;
+    :ownsRealEstate ex:MomVillageHouse .
+
+# The New Sibling (Triggers the +3000 Euro Bonus)
+ex:Yannis a :Person ;
+    :birthDate "2015-06-01"^^xsd:date ; # 10 Years old (Minor)
+    :isDependent true ;
+    :hasParent ex:Dad, ex:Mom .
+
+# ==========================================
+# 4. RESIDENCES & LEASES
+# ==========================================
+
+ex:StudentApartment a :Residence ;
+    :locatedIn ex:AthensMunicipality ;
+    :residenceType "Rented" ;
+    :leaseStartDate "2024-09-01"^^xsd:date .
+
+ex:FamilyHome a :Residence ;
+    :locatedIn ex:ThessalonikiMunicipality ;
+    :residenceType "Owned" .
+
+# ==========================================
+# 5. INCOME RECORDS (High Income Test)
+# ==========================================
+# Goal: Total = 32,000 (Fails base limit 30k, Passes dynamic limit 33k)
+
+ex:KaterinaIncome a :IncomeRecord ;
+    :incomeYear "2024"^^xsd:gYear ;
+    :amount 0.0 .
+
+ex:DadIncome a :IncomeRecord ;
+    :incomeYear "2024"^^xsd:gYear ;
+    :amount 25000.0 . # Increased
+
+ex:MomIncome a :IncomeRecord ;
+    :incomeYear "2024"^^xsd:gYear ;
+    :amount 7000.0 .  # Increased
+
+# ==========================================
+# 6. EDUCATION RECORDS
+# ==========================================
+
+ex:KaterinaEduRecord a :EducationRecord ;
+    :isEnrolledAt ex:AthensMunicipality ;
+    :hasValidAcademicID false ;
+    :passedCoursesCount 6 ;
+    :totalCoursesCount 10 .
+
+# ==========================================
+# 7. REAL ESTATE ASSETS
+# ==========================================
+
+ex:DadMainProperty a :RealEstateProperty ;
+    :propertyLocation ex:ThessalonikiMunicipality ;
+    :propertyAreaM2 150.0 .
+
+ex:MomVillageHouse a :RealEstateProperty ;
+    :propertyLocation ex:TinyVillageMunicipality ;
+    :propertyAreaM2 80.0 .
