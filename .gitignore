@@ -1,7 +1,4 @@
-# PyVis JavaScript libraries
-lib/
-
-# Temporary directory
+# Temporary files
 Results/
 
 # Secrets

@@ -126,7 +126,7 @@
     rdfs:domain :Person ;
     rdfs:range :EducationRecord .
 
-:isEnrolledAt a rdf:Property ;
+:cityOfStudy a rdf:Property ;
     rdfs:domain :EducationRecord ;
     rdfs:range :Municipality ;
     rdfs:comment "Links the education record to the City/Municipality of the University." .

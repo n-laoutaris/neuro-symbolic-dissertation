@@ -14,7 +14,7 @@ ex:ThessalonikiMunicipality a :Municipality ;
     :municipalityPopulation 315196 .
 
 ex:TinyVillageMunicipality a :Municipality ;
-    :municipalityPopulation 5000 .
+    :municipalityPopulation 500 .
 
 # ==========================================
 # 2. THE APPLICANT (Katerina)
@@ -64,7 +64,7 @@ ex:Yannis a :Person ;
 ex:StudentApartment a :Residence ;
     :locatedIn ex:AthensMunicipality ;
     :residenceType "Rented" ;
-    :leaseStartDate "2024-09-01"^^xsd:date .
+    :leaseStartDate "2025-09-01"^^xsd:date .
 
 ex:FamilyHome a :Residence ;
     :locatedIn ex:ThessalonikiMunicipality ;
@@ -92,7 +92,7 @@ ex:MomIncome a :IncomeRecord ;
 # ==========================================
 
 ex:KaterinaEduRecord a :EducationRecord ;
-    :isEnrolledAt ex:AthensMunicipality ;
+    :cityOfStudy ex:AthensMunicipality ;
     :hasValidAcademicID true ;
     :passedCoursesCount 6 ;
     :totalCoursesCount 10 .

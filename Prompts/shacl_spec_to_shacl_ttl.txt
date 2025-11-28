@@ -46,6 +46,12 @@ A single `.ttl` file containing `sh:NodeShape` definitions.
 6.  **Message:**
     * Generate a clear `sh:message` explaining the violation (usually the inverse of the `desc`).
 
+7.  **Date & Duration Logic:**
+    * Use `now()` to represent the current date/time. For example:
+    * To calculate **Age** (Years): Use `(YEAR(now()) - YEAR(?birthDate))`.
+    * To calculate **Elapsed Months** (Duration): Use `((YEAR(now()) * 12 + MONTH(now())) - (YEAR(?startDate) * 12 + MONTH(?startDate)))`.
+    * Always use these mathematical breakdowns rather than subtracting dates directly, as `xsd:duration` support varies by validator.
+
 ### FEW-SHOT EXAMPLES
 
 **Example 1: Identity Check (URI Comparison)**
