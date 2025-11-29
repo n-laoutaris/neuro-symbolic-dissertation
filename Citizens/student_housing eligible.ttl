@@ -24,8 +24,7 @@ ex:Katerina a :Applicant, :Person ;
     :citizenshipCountry "GR" ;
     :birthDate "2003-05-20"^^xsd:date ; # 22 Years old
     :hasParent ex:Dad, ex:Mom ;
-    :isDependent true ; 
-    
+    :isDependent true ;     
     # Housing & Education
     :hasCurrentResidence ex:StudentApartment ;
     :hasFamilyResidence ex:FamilyHome ;

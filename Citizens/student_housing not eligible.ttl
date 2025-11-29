@@ -64,7 +64,7 @@ ex:Yannis a :Person ;
 ex:StudentApartment a :Residence ;
     :locatedIn ex:AthensMunicipality ;
     :residenceType "Rented" ;
-    :leaseStartDate "2025-09-01"^^xsd:date .
+    :leaseStartDate "2024-09-01"^^xsd:date .
 
 ex:FamilyHome a :Residence ;
     :locatedIn ex:ThessalonikiMunicipality ;
@@ -94,7 +94,7 @@ ex:MomIncome a :IncomeRecord ;
 ex:KaterinaEduRecord a :EducationRecord ;
     :cityOfStudy ex:AthensMunicipality ;
     :hasValidAcademicID true ;
-    :passedCoursesCount 6 ;
+    :passedCoursesCount 4 ;
     :totalCoursesCount 10 .
 
 # ==========================================

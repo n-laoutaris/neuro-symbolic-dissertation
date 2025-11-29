@@ -1,0 +1,79 @@
+- id: SCN_00
+  description: "Conforms to all preconditions."
+  expected_violation_count: 0
+  actions:
+    - type: no_action
+
+- id: SCN_01
+  description: "Not an EU citizen."
+  expected_violation_count: 1
+  actions:
+    - type: replace_node
+      turtle: |
+        ex:Katerina a :Applicant, :Person ;
+            :citizenshipCountry "CA" ;
+            :birthDate "2003-05-20"^^xsd:date ; 
+            :hasParent ex:Dad, ex:Mom ;
+            :isDependent true ; 
+            :hasCurrentResidence ex:StudentApartment ;
+            :hasFamilyResidence ex:FamilyHome ;
+            :hasEducation ex:KaterinaEduRecord ;
+            :hasIncome ex:KaterinaIncome .
+
+- id: SCN_02
+  description: "No academic ID."
+  expected_violation_count: 1
+  actions:
+    - type: replace_node
+      turtle: |
+        ex:KaterinaEduRecord a :EducationRecord ;
+            :cityOfStudy ex:Athens ;
+            :hasValidAcademicID false ;
+            :passedCoursesCount 6 ;
+            :totalCoursesCount 10 .
+
+- id: SCN_03
+  description: "Base income is too high."
+  expected_violation_count: 1
+  actions:
+    - type: replace_node
+      turtle: |
+        ex:DadIncome a :IncomeRecord ;
+            :incomeYear "2024"^^xsd:gYear ;
+            :amount 27000.0 . 
+
+- id: SCN_05
+  description: "Study city is the same as family residence city."
+  expected_violation_count: 1
+  actions:
+    - type: replace_node
+      turtle: |
+        ex:StudentApartment a :Residence ;
+            :locatedIn ex:Trikala ; 
+            :residenceType "Rented" ;
+            :leaseStartDate "2024-09-01"^^xsd:date .
+    - type: replace_node
+      turtle: |
+        ex:KaterinaEduRecord a :EducationRecord ;
+            :cityOfStudy ex:Trikala ;
+            :hasValidAcademicID true ;
+            :passedCoursesCount 6 ;
+            :totalCoursesCount 10 .
+    - type: replace_node
+      turtle: |
+        ex:FamilyHome a :Residence ;
+            :locatedIn ex:Trikala ;
+            :residenceType "Rented" .
+
+- id: SCN_10
+  description: "Bad academic performance."
+  expected_violation_count: 1
+  actions:
+    - type: replace_node
+      turtle: |
+        ex:KaterinaEduRecord a :EducationRecord ;
+            :cityOfStudy ex:Athens ;
+            :hasValidAcademicID true ;
+            :passedCoursesCount 4 ;
+            :totalCoursesCount 10 .
+
