@@ -10,7 +10,7 @@ import pyparsing
 
 
 # Pyvis graph visualization
-def visualize_graph(ttl_file):
+def visualize_graph(ttl_file, open_in_browser=False):
     # Load TTL file
     g = Graph()
     g.parse(ttl_file, format="turtle")  
@@ -18,7 +18,6 @@ def visualize_graph(ttl_file):
     # Namespace
     CCCEV = Namespace("http://data.europa.eu/m8g/")
     CPSV = Namespace("http://purl.org/vocab/cpsv#")
-    EX = Namespace("http://example.org/")
     SC = Namespace("http://example.org/schema#")
 
     net = Network(height="1440px", width="100%", notebook=True, directed=True, cdn_resources='remote')
@@ -71,7 +70,8 @@ def visualize_graph(ttl_file):
     html_file = ttl_file.replace("ttl", "html")
     # Render and show
     net.save_graph(html_file)
-    webbrowser.open("file://" + os.path.abspath(html_file)) # Use absolute path for browser
+    if open_in_browser:
+        webbrowser.open("file://" + os.path.abspath(html_file)) # Use absolute path for browser
 
 
 # Hashing Graphs
