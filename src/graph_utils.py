@@ -8,17 +8,16 @@ from rdflib.plugins.sparql import prepareQuery
 from rdflib.plugins.parsers.notation3 import BadSyntax
 import pyparsing
 
+# Namespaces
+CCCEV = Namespace("http://data.europa.eu/m8g/")
+CPSV = Namespace("http://purl.org/vocab/cpsv#")
+SC = Namespace("http://example.org/schema#")
 
 # Pyvis graph visualization
 def visualize_graph(ttl_file, open_in_browser=False):
     # Load TTL file
     g = Graph()
     g.parse(ttl_file, format="turtle")  
-
-    # Namespace
-    CCCEV = Namespace("http://data.europa.eu/m8g/")
-    CPSV = Namespace("http://purl.org/vocab/cpsv#")
-    SC = Namespace("http://example.org/schema#")
 
     net = Network(height="1440px", width="100%", notebook=True, directed=True, cdn_resources='remote')
     net.force_atlas_2based()
@@ -93,15 +92,13 @@ def get_semantic_hash(rdf_text):
     triples_string = "".join([str(t) for t in triples])
     return hashlib.md5(triples_string.encode('utf-8')).hexdigest()
 
-# shacl shape syntax deep check
+# shacl graph syntax deep check
 def validate_shacl_syntax(shacl_ttl_string):
     """
-    Checks syntactic validity of a SHACL file on three levels:
-    1. RDF/Turtle Syntax
-    2. SHACL Structure (Basic)
-    3. Embedded SPARQL Syntax
+    Checks syntactic validity of a SHACL file on three levels.
+    Collects ALL SPARQL errors found, not just the first one.
     
-    Returns: (is_valid (bool), error_stage (str), error_message (str))
+    Returns: (is_valid (bool), error_type (str), error_message (str))
     """
     def shape_name(uri):
         # Helper to make error messages readable
@@ -119,7 +116,6 @@ def validate_shacl_syntax(shacl_ttl_string):
     namespaces = dict(g.namespaces())
     
     # --- LEVEL 2: Embedded SPARQL Syntax ---
-    # We query the graph to find every 'sh:select' string
     query_finder = """
         PREFIX sh: <http://www.w3.org/ns/shacl#>
         SELECT ?shape ?sparql
@@ -128,25 +124,72 @@ def validate_shacl_syntax(shacl_ttl_string):
         }
     """
     
+    collected_errors = []
+    
     try:
-        results = g.query(query_finder)        
+        results = g.query(query_finder)
+        
         for row in results:
             shape_uri = str(row.shape)
             sparql_string = str(row.sparql)
+            name = shape_name(shape_uri)
             
             try:
                 # Attempt to compile the SPARQL string
                 prepareQuery(sparql_string, initNs=namespaces)
                 
             except pyparsing.ParseException as pe:
-                # This captures syntax errors like missing brackets } or bad keywords
-                return False, "SPARQL_SYNTAX", f"Shape {shape_name(shape_uri)}: {pe}"
+                # Syntax error (brackets, keywords)
+                msg = str(pe).replace("\n", " ").split("(at char")[0].strip() # Clean up the verbose pyparsing error string
+                collected_errors.append(f"{name}: {msg}")
+                
             except Exception as e:
-                return False, "SPARQL_OTHER", f"Shape {shape_name(shape_uri)}: {str(e)}"
+                # Other errors (prefixes, logic)
+                msg = str(e).replace("\n", " ")
+                collected_errors.append(f"{name}: {msg}")
                 
     except Exception as e:
         return False, "QUERY_EXTRACTION", str(e)
 
-    # If we survived all checks
+    # --- FINAL VERDICT ---
+    if collected_errors:
+        # Join all errors into one string for the CSV
+        full_report = " | ".join(collected_errors)
+        return False, "SPARQL_SYNTAX", full_report
+
     return True, "VALID", "OK"
 
+# Helper: resolve node paths (return nodes, not literals) 
+def resolve_node_path(citizen_g, root_uri, path_list, datatype):
+    
+    # 1. Determine how deep to go
+    if datatype == "URI":
+        # For Identity logic (City, Person), the Value IS the Node.
+        traversal_parts = path_list
+    else:
+        # For Value logic (Income, Area), the Value is a Literal. Stop one step BEFORE the literal to get the Node holding it.
+        traversal_parts = path_list[:-1]
+
+    # 2. Traverse
+    current_nodes = {root_uri}
+    
+    for part in traversal_parts:
+        next_nodes = set()
+        pred = SC[part] # Assumes our schema matches the namespace
+        
+        for node in current_nodes:
+            # Find all objects connected by this predicate
+            for obj in citizen_g.objects(node, pred):
+                # Safety check: Ensure we don't accidentally traverse into a Literal 
+                # (unless it's the final step of a URI path, but usually URIs point to URIs)
+                if isinstance(obj, Literal) and datatype == "URI":
+                     continue # Skip weird data errors
+                next_nodes.add(obj)
+        
+        current_nodes = next_nodes
+        
+        # Optimization: If dead end, stop early
+        if not current_nodes:
+            return set()
+
+    return current_nodes

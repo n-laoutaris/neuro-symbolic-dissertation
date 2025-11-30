@@ -8,72 +8,74 @@
   description: "Not an EU citizen."
   expected_violation_count: 1
   actions:
-    - type: replace_node
-      turtle: |
-        ex:Katerina a :Applicant, :Person ;
-            :citizenshipCountry "CA" ;
-            :birthDate "2003-05-20"^^xsd:date ; 
-            :hasParent ex:Dad, ex:Mom ;
-            :isDependent true ; 
-            :hasCurrentResidence ex:StudentApartment ;
-            :hasFamilyResidence ex:FamilyHome ;
-            :hasEducation ex:KaterinaEduRecord ;
-            :hasIncome ex:KaterinaIncome .
+    - type: patch_node
+      turtle: ex:Katerina :citizenshipCountry "CA" .
 
 - id: SCN_02
   description: "No academic ID."
   expected_violation_count: 1
   actions:
-    - type: replace_node
-      turtle: |
-        ex:KaterinaEduRecord a :EducationRecord ;
-            :cityOfStudy ex:Athens ;
-            :hasValidAcademicID false ;
-            :passedCoursesCount 6 ;
-            :totalCoursesCount 10 .
+    - type: patch_node
+      turtle: ex:KaterinaEduRecord :hasValidAcademicID false .
 
 - id: SCN_03
   description: "Base income is too high."
   expected_violation_count: 1
   actions:
-    - type: replace_node
-      turtle: |
-        ex:DadIncome a :IncomeRecord ;
-            :incomeYear "2024"^^xsd:gYear ;
-            :amount 27000.0 . 
+    - type: patch_node
+      turtle: ex:DadIncome :amount 26001.0 .
+
+- id: SCN_04
+  description: "Income threshold decreased due to no dependent children."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:Fonis :isDependent false .
 
 - id: SCN_05
   description: "Study city is the same as family residence city."
   expected_violation_count: 1
   actions:
-    - type: replace_node
+    - type: patch_node
       turtle: |
-        ex:StudentApartment a :Residence ;
-            :locatedIn ex:Trikala ; 
-            :residenceType "Rented" ;
-            :leaseStartDate "2024-09-01"^^xsd:date .
-    - type: replace_node
-      turtle: |
-        ex:KaterinaEduRecord a :EducationRecord ;
-            :cityOfStudy ex:Trikala ;
-            :hasValidAcademicID true ;
-            :passedCoursesCount 6 ;
-            :totalCoursesCount 10 .
-    - type: replace_node
-      turtle: |
-        ex:FamilyHome a :Residence ;
-            :locatedIn ex:Trikala ;
-            :residenceType "Rented" .
+        ex:Trikala a :Municipality ; :municipalityPopulation 50000 .
+        ex:StudentApartment :locatedIn ex:Trikala . 
+        ex:KaterinaEduRecord :cityOfStudy ex:Trikala .
+        ex:FamilyHome :locatedIn ex:Trikala ; :residenceType "Rented" .
+
+- id: SCN_06
+  description: "Parent owns property in study city."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:DadMainProperty :propertyLocation ex:Athens .
+
+- id: SCN_07
+  description: "Lease too short."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:StudentApartment :leaseStartDate "2025-11-30"^^xsd:date .
+
+- id: SCN_08
+  description: "Family property too big."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:DadMainProperty :propertyAreaM2 201.0 .
+
+- id: SCN_09
+  description: "Property threshold decreased due to large municipality."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:TinyVillage :municipalityPopulation 3001 .
 
 - id: SCN_10
   description: "Bad academic performance."
   expected_violation_count: 1
   actions:
-    - type: replace_node
-      turtle: |
-        ex:KaterinaEduRecord a :EducationRecord ;
-            :cityOfStudy ex:Athens ;
-            :hasValidAcademicID true ;
-            :passedCoursesCount 4 ;
-            :totalCoursesCount 10 .
+    - type: patch_node
+      turtle: ex:KaterinaEduRecord :passedCoursesCount 4 .
+
 

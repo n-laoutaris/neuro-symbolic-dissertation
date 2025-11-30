@@ -1,8 +1,5 @@
-from rdflib import Namespace, Graph
+from rdflib import Namespace, Graph, SH, RDF
 import csv
-
-SH = Namespace("http://www.w3.org/ns/shacl#")
-RDF = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 
 # Helper to parse SHACL validation report
 def parse_validation_report(conforms, results_graph, results_text):
@@ -45,55 +42,49 @@ def parse_validation_report(conforms, results_graph, results_text):
         "full_report": results_text # Keep raw text just in case
     }
     
+
 def apply_mutations(base_graph, actions):
     """
     Applies text-based Turtle mutations.
     """
     
-    # Pre-defined header to allow "lazy" Turtle snippets in YAML
     PREFIX_HEADER = """
     @prefix : <http://example.org/schema#> .
     @prefix ex: <http://example.org/> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
     """
     
-    # 1. Clone the graph (Memory safe)
+    # 1. Clone
     new_graph = Graph()
+    for ns in base_graph.namespaces():
+        new_graph.bind(ns[0], ns[1])
     for t in base_graph: new_graph.add(t)
     
-    for action in actions:
-        if action['type'] == 'replace_node':
+    for action in actions:        
+        # --- ACTION: PATCH NODE (The Clean Way) ---
+        if action['type'] == 'patch_node':
             snippet = action['turtle']
             
-            # A. Parse the snippet into a temporary graph
-            # We prepend prefixes so the user doesn't have to type them every time
+            # A. Parse the partial snippet
             full_turtle = PREFIX_HEADER + "\n" + snippet
             snippet_graph = Graph()
             try:
                 snippet_graph.parse(data=full_turtle, format="turtle")
             except Exception as e:
-                raise ValueError(f"Invalid Turtle in mutation: {e}")
+                raise ValueError(f"Invalid Turtle in patch: {e}")
 
-            # B. Identify the Subject(s) being replaced
-            # The snippet describes 1+ nodes. We find them all.
-            subjects = set(snippet_graph.subjects())
-            
-            for s in subjects:
-                # C. Wipe OLD properties for this subject from the main graph
-                # We remove (s, ?, ?) -> outgoing edges
-                # We KEEP (?, ?, s) -> incoming edges (e.g. Dad -> hasIncome -> DadIncome)
-                new_graph.remove((s, None, None))
+            # B. Apply the updates line-by-line
+            for s, p, o in snippet_graph:
+                # 1. Remove the OLD value for this specific property
+                #    (Keeps other properties of 's' intact)
+                new_graph.remove((s, p, None))
                 
-                # D. Add NEW properties from the snippet
-                for p, o in snippet_graph.predicate_objects(s):
-                    new_graph.add((s, p, o))
-                    
+                # 2. Add the NEW value
+                new_graph.add((s, p, o))
+
         elif action['type'] == 'no_action':
             pass
-    
-    new_graph.bind("ex", Namespace("http://example.org/"))     
-    new_graph.bind("", Namespace("http://example.org/schema#"))
-           
+            
     return new_graph
 
 # Write to csv

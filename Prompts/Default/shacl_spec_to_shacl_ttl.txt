@@ -15,7 +15,7 @@ A single `.ttl` file containing `sh:NodeShape` definitions.
     * Use: `sh:targetClass :Applicant ;`.
 
 2.  **Namespace & Prefixes:**
-    * Use the namespace defined in the Domain Ontology for all properties (assumed `@prefix : <http://example.org/schema#> .`).
+    * Use the namespace defined in the Domain Ontology for all properties (`@prefix : <http://example.org/schema#> .`).
     * Include standard prefixes: `sh:`, `xsd:`, `rdf:`, `rdfs:`.
 
 3.  **Path Resolution:**
