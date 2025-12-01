@@ -1,0 +1,32 @@
+% --- CONFIGURATION START ---
+\documentclass[12pt, a4paper]{report} % TODO: Change 'report' later
+
+% Essential Packages
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}      % For images
+\usepackage{geometry}      % For margins
+\usepackage{hyperref}      % For clickable links in PDF
+\usepackage[style=ieee]{biblatex} % For references
+\addbibresource{references.bib}
+
+% --- CONFIGURATION END ---
+
+\begin{document}
+
+% 1. Title Page (Placeholder)
+\title{Exploring Neuro-symbolic Pipelines for Structured Knowledge Extraction}
+\author{Nikolaos Laoutaris}
+\date{\today}
+\maketitle
+
+% 2. Table of Contents (Auto-generated)
+\tableofcontents
+
+% 3. The Content (Remember: No styling here, just imports)
+\include{Chapters/01_introduction}
+\include{Chapters/02_slr}
+
+% 4. Bibliography
+\printbibliography
+
+\end{document}
