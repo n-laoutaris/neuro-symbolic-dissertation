@@ -9,7 +9,7 @@ from rdflib import Graph, Namespace
 # Local imports
 from src.llm_utils import initialize_gemini_client, call_gemini, call_gemini_pdf, call_gemini_json, with_retries
 from src.graph_utils import visualize_graph, get_semantic_hash, validate_shacl_syntax, resolve_node_path
-from src.parsing_utils import read_txt
+from src.parsing_utils import read_txt, print_progress
 
 def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_VERSION: str, GEMINI_MODEL: str, current_run_id: int):
     
@@ -19,7 +19,7 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_V
     execution_start_time = time.time()
 
     ### 1.1 Document → Preconditions Summary
-    print("Generating Preconditions Summary...", end = "\r")
+    print_progress(f"Run {current_run_id}: Generating Preconditions Summary...")
 
     file_path = f"Precondition documents/{DOCUMENT_NAME}.pdf"
     prompt = read_txt(f'Prompts/{PROMPT_VERSION}/summarization.txt')
@@ -30,7 +30,7 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_V
         f.write(preconditions_summary)
         
     ### 1.2. Preconditions Summary + Citizen Schema (TTL) → Information Model (JSON)
-    print("Generating Information Model...", end = "\r")
+    print_progress(f"Run {current_run_id}: Generating Information Model...")
 
     citizen_schema = read_txt(f"Citizens/{DOCUMENT_NAME} schema.ttl")
 
@@ -158,7 +158,7 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_V
         json.dump(shacl_spec_json, f, indent=2)
         
     ### 2.2. SHACL-spec (JSON) + Citizen Schema (TTL) → SHACL Shapes (TTL)
-    print("Generating SHACL Shapes...", end = "\r")
+    print_progress(f"Run {current_run_id}: Generating SHACL Shapes...")
 
     # Convert JSON to string for prompt
     shacl_spec_str = json.dumps(shacl_spec_json)

@@ -1,4 +1,5 @@
 import json
+import sys
 
 # Read txt file into a string (used for prompts)
 def read_txt(path):
@@ -16,3 +17,12 @@ def read_json(path, raw = False):
     return json.dumps(json_file, indent=2)
 
 
+def print_progress(message):
+    """
+    Clears the current line and prints a new message.
+    Works like a loading bar text.
+    """
+    # \r = Return to start of line
+    # \033[K = Clear to end of line (ANSI escape code)
+    sys.stdout.write(f"\r\033[K{message}")
+    sys.stdout.flush()

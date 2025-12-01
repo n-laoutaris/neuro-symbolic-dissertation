@@ -1,7 +1,1 @@
-Run ID,Document Name,Timestamp,Model Name,Service Graph Hash,SHACL Graph Hash,SHACL Valid Syntax,SHACL Error Type,SHACL Error Message,Scenario ID,Scenario Description,Expected Violation Count,Actual Violation Count,Violated Shapes,Violation Messages,Execution Time,Successfully Executed
-1
-1
-1
-2
-2
-2
+Run ID,Timestamp,Document Name,Prompts,Model Name,Service Graph Hash,SHACL Graph Hash,SHACL Valid Syntax,SHACL Error Type,SHACL Error Message,Execution Time,Scenario ID,Scenario Description,Expected Violation Count,Actual Violation Count,Violated Shapes,Violation Messages,Successfully Executed
