@@ -2,19 +2,43 @@
 \label{chap:slr}
 
 \section{Introduction}
-This chapter details the Systematic Literature Review (SLR) conducted to establish the theoretical foundations of Neuro-Symbolic AI in public administration.
+This chapter details the Systematic Literature Review (SLR) conducted to establish the theoretical foundations of Neuro-Symbolic AI.
 
-\section{Search Strategy}
-To ensure a comprehensive review, we utilized the PRISMA guidelines.
+\section{Methodology}
 
-\subsection{Data Sources}
-We selected Scopus as our primary database due to its extensive coverage of Computer Science and Law literature.
+PRISMA guidelines.
 
-\begin{itemize}
-    \item \textbf{Database:} Scopus
-    \item \textbf{Date Range:} 2018--2024
-    \item \textbf{Language:} English
-\end{itemize}
+\subsection{Research Questions}
 
-\section{Current State of the Art}
-Recent works by Smith et al. \cite{smith2023} demonstrate...
+\subsection{Research Strategy}
+Database: Scopus
+Date Range: 2023--2026
+Language: English
+Query: ( "Large Language Model" OR "LLM" ) AND ( "SHACL" OR "SPARQL" ) AND ( "Semantic Web" OR "Knowledge Graph" )
+
+\subsection{Inclusion/Exclusion Criteria}
+During screening:
+Exclude usage of KGs for XAI. Include explainability if it's tested on our use case.
+Exclude Conference Proceedings Entries.
+Include SPARQL query generation by LLM from natural language questions. 
+Exclude graph entity alignment.
+Exclude "conceptual", "theoretical" and "preliminary results".
+Exclude opposite flow: using LLM to produce natural language FROM SPARQL.
+Exclude off-topic usage of LLMs (e.g. not as part of the same data pipeline as the KGs).
+Exclude comparisons between LLM approaches and Semantic web approaches.
+Include prompt engineering comparisons (for the same task as our pipeline). Exclude it for different or generic applications.
+Include fine-tuning for use with KGs. Exclude otherwise.
+Exclude subgraph extraction by LLM.
+
+
+\section{Results}
+Results: 125
+Duplicates: 3
+Screened: 122
+
+\section{Thematic Analysis}
+\subsection{}
+\subsection{}
+\subsection{}
+
+\section{Discussion and Research Gap}
