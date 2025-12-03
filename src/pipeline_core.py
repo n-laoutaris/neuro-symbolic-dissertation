@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from rdflib import Graph, Namespace
 
 # Local imports
-from src.llm_utils import initialize_gemini_client, call_gemini, call_gemini_pdf, call_gemini_json, with_retries
+from src.llm_utils import initialize_gemini_client, call_gemini, call_gemini_pdf, call_gemini_json, reflect, with_retries
 from src.graph_utils import visualize_graph, get_semantic_hash, validate_shacl_syntax, resolve_node_path
 from src.parsing_utils import read_txt
 
@@ -24,6 +24,9 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, progress_bar, DOCUMENT_NAME:
     file_path = f"Precondition documents/{DOCUMENT_NAME}.pdf"
     prompt = read_txt(f'Prompts/{PROMPT_VERSION}/summarization.txt')
     preconditions_summary = with_retries(call_gemini_pdf, prompt, file_path)
+    # Optional: reflexion
+    if PROMPT_VERSION == 'Reflexion':
+        preconditions_summary = reflect([prompt], preconditions_summary)
 
     # Save artifact
     with open(f"{artifact_dir}/{DOCUMENT_NAME} preconditions summary.txt", "w") as f:
@@ -52,8 +55,10 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, progress_bar, DOCUMENT_NAME:
     # Formulate prompt content and call Gemini
     prompt = read_txt(f'Prompts/{PROMPT_VERSION}/preconditions_to_JSON.txt')
     content = [prompt, preconditions_summary, citizen_schema]
-
     info_model_str = with_retries(call_gemini_json, content, schema)
+    # Optional: reflexion
+    if PROMPT_VERSION == 'Reflexion':
+        preconditions_summary = reflect(content, info_model_str, schema)
 
     # Save artifact
     with open(f"{artifact_dir}/{DOCUMENT_NAME} information model.json", "w") as f:
@@ -165,7 +170,10 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, progress_bar, DOCUMENT_NAME:
     prompt = read_txt(f'Prompts/{PROMPT_VERSION}/shacl_spec_to_shacl_ttl.txt')
     content = [prompt, shacl_spec_str, citizen_schema]
 
-    shacl_shapes = with_retries(call_gemini, content)
+    shacl_shapes = with_retries(call_gemini, content)    
+    # Optional: reflexion
+    if PROMPT_VERSION == 'Reflexion':
+        preconditions_summary = reflect(content, shacl_shapes)
 
     # Cleanup gemini markdown formatting
     shacl_shapes = shacl_shapes.strip("`").replace("turtle", "").replace("ttl", "").strip()

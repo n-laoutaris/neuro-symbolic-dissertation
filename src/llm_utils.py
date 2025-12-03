@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from src.parsing_utils import read_txt
 
 # --- Module-Level Variables  ---
 _CLIENT = None
@@ -93,3 +94,26 @@ def with_retries(func, *args, base_delay=4.0):
             
             # Anything else, crash immediately
             raise e
+
+# Reflexion loop
+def reflect(original_content_list, previous_result, json_schema=None):
+    """
+    Asks the model to review its own work and fix potential errors.
+    """
+    # 1. Load the "Critique & Fix" instructions
+    reflexion_prompt = read_txt(f'Prompts/Reflexion/reflexion.txt')
+    
+    # 2. Flatten the original input (which is a list of strings)
+    flat_content = "\n\n".join([str(item) for item in original_content_list])
+ 
+    # 3. Construct the "Review" payload
+    new_content = [
+        reflexion_prompt,
+        f"--- [ORIGINAL INPUT DATA START] ---\n{flat_content}\n--- [ORIGINAL INPUT DATA END] ---",
+        f"--- [DRAFT RESPONSE] ---\n{previous_result}"]
+
+    # 4. Call API
+    if json_schema:
+        return with_retries(call_gemini_json, new_content, json_schema)
+    else:
+        return with_retries(call_gemini, new_content)
