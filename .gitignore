@@ -1,3 +1,6 @@
+# Testing artifacts. The results of these are tracked in CSV files.
+Testing Artifacts/
+
 # Secrets
 .env
 

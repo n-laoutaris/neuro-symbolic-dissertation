@@ -9,9 +9,9 @@ from rdflib import Graph, Namespace
 # Local imports
 from src.llm_utils import initialize_gemini_client, call_gemini, call_gemini_pdf, call_gemini_json, with_retries
 from src.graph_utils import visualize_graph, get_semantic_hash, validate_shacl_syntax, resolve_node_path
-from src.parsing_utils import read_txt, print_progress
+from src.parsing_utils import read_txt
 
-def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_VERSION: str, GEMINI_MODEL: str, current_run_id: int):
+def run_main_pipeline(ctx: dict, artifact_dir: str, progress_bar, DOCUMENT_NAME: str, PROMPT_VERSION: str, GEMINI_MODEL: str, current_run_id: int):
     
     ### Initialization
     initialize_gemini_client(model_name=GEMINI_MODEL)
@@ -19,7 +19,7 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_V
     execution_start_time = time.time()
 
     ### 1.1 Document → Preconditions Summary
-    print_progress(f"Run {current_run_id}: Generating Preconditions Summary...")
+    progress_bar.set_description(f"Run {current_run_id}: Generating Preconditions Summary...")
 
     file_path = f"Precondition documents/{DOCUMENT_NAME}.pdf"
     prompt = read_txt(f'Prompts/{PROMPT_VERSION}/summarization.txt')
@@ -30,7 +30,7 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_V
         f.write(preconditions_summary)
         
     ### 1.2. Preconditions Summary + Citizen Schema (TTL) → Information Model (JSON)
-    print_progress(f"Run {current_run_id}: Generating Information Model...")
+    progress_bar.set_description(f"Run {current_run_id}: Generating Information Model...")
 
     citizen_schema = read_txt(f"Citizens/{DOCUMENT_NAME} schema.ttl")
 
@@ -158,7 +158,7 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_V
         json.dump(shacl_spec_json, f, indent=2)
         
     ### 2.2. SHACL-spec (JSON) + Citizen Schema (TTL) → SHACL Shapes (TTL)
-    print_progress(f"Run {current_run_id}: Generating SHACL Shapes...")
+    progress_bar.set_description(f"Run {current_run_id}: Generating SHACL Shapes...")
 
     # Convert JSON to string for prompt
     shacl_spec_str = json.dumps(shacl_spec_json)
@@ -171,13 +171,14 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, DOCUMENT_NAME: str, PROMPT_V
     shacl_shapes = shacl_shapes.strip("`").replace("turtle", "").replace("ttl", "").strip()
     
     # Ensure prefixes are present and correct 
-    STANDARD_HEADERS = """ # The ONE source of truth for headers
+    STANDARD_HEADERS = """
     @prefix : <http://example.org/schema#> .
+    @prefix ex: <http://example.org/> .
     @prefix sh: <http://www.w3.org/ns/shacl#> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
     @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-    """
+    """  # The ONE source of truth for headers
 
     # Strip existing headers (naive approach)
     lines = shacl_shapes.split('\n')

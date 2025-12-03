@@ -1,4 +1,4 @@
-from rdflib import Graph, Namespace, RDF, RDFS, Literal
+from rdflib import Graph, Namespace, RDF, RDFS, SH, Literal, BNode
 from rdflib.compare import to_isomorphic
 import hashlib
 from pyvis.network import Network
@@ -92,18 +92,12 @@ def get_semantic_hash(rdf_text):
     triples_string = "".join([str(t) for t in triples])
     return hashlib.md5(triples_string.encode('utf-8')).hexdigest()
 
-# shacl graph syntax deep check
+
 def validate_shacl_syntax(shacl_ttl_string):
     """
     Checks syntactic validity of a SHACL file on three levels.
-    Collects ALL SPARQL errors found, not just the first one.
-    
-    Returns: (is_valid (bool), error_type (str), error_message (str))
+    Resolves Blank Nodes to their Parent Shape names for readability.
     """
-    def shape_name(uri):
-        # Helper to make error messages readable
-        return uri.split("#")[-1] if "#" in uri else uri.split("/")[-1]
-    
     g = Graph()
     
     # --- LEVEL 1: RDF Syntax ---
@@ -112,15 +106,15 @@ def validate_shacl_syntax(shacl_ttl_string):
     except (BadSyntax, Exception) as e:
         return False, "RDF_SYNTAX", str(e).replace("\n", " ")
 
-    # Extract namespaces to help the SPARQL parser later
     namespaces = dict(g.namespaces())
     
     # --- LEVEL 2: Embedded SPARQL Syntax ---
+    # Find the node that holds the query
     query_finder = """
         PREFIX sh: <http://www.w3.org/ns/shacl#>
-        SELECT ?shape ?sparql
+        SELECT ?constraintNode ?sparql
         WHERE {
-            ?shape sh:select ?sparql .
+            ?constraintNode sh:select ?sparql .
         }
     """
     
@@ -130,34 +124,48 @@ def validate_shacl_syntax(shacl_ttl_string):
         results = g.query(query_finder)
         
         for row in results:
-            shape_uri = str(row.shape)
+            constraint_node = row.constraintNode
             sparql_string = str(row.sparql)
-            name = shape_name(shape_uri)
             
+            # --- THE FIX: Resolve Name ---
+            shape_name = "Unknown_Shape"
+            
+            if isinstance(constraint_node, BNode):
+                # It's a Blank Node. Who owns it?
+                # Usually linked via sh:sparql
+                parents = list(g.subjects(SH.sparql, constraint_node))
+                if parents:
+                    # Found the parent (e.g., ex:income_shape)
+                    shape_name = str(parents[0]).split("#")[-1].split("/")[-1]
+                else:
+                    # Fallback: maybe it's a property shape with a sparql constraint?
+                    # (Less common but possible)
+                    parents = list(g.subjects(SH.property, constraint_node))
+                    if parents:
+                        shape_name = str(parents[0]).split("#")[-1].split("/")[-1] + "_Prop"
+            else:
+                # It has a URI
+                shape_name = str(constraint_node).split("#")[-1].split("/")[-1]
+
+            # --- Compile Check ---
             try:
-                # Attempt to compile the SPARQL string
                 prepareQuery(sparql_string, initNs=namespaces)
-                
             except pyparsing.ParseException as pe:
-                # Syntax error (brackets, keywords)
-                msg = str(pe).replace("\n", " ").split("(at char")[0].strip() # Clean up the verbose pyparsing error string
-                collected_errors.append(f"{name}: {msg}")
-                
+                msg = str(pe).replace("\n", " ").split("(at char")[0].strip()
+                collected_errors.append(f"{shape_name}: {msg}")
             except Exception as e:
-                # Other errors (prefixes, logic)
                 msg = str(e).replace("\n", " ")
-                collected_errors.append(f"{name}: {msg}")
+                collected_errors.append(f"{shape_name}: {msg}")
                 
     except Exception as e:
         return False, "QUERY_EXTRACTION", str(e)
 
-    # --- FINAL VERDICT ---
     if collected_errors:
-        # Join all errors into one string for the CSV
         full_report = " | ".join(collected_errors)
         return False, "SPARQL_SYNTAX", full_report
 
     return True, "VALID", "OK"
+
 
 # Helper: resolve node paths (return nodes, not literals) 
 def resolve_node_path(citizen_g, root_uri, path_list, datatype):

@@ -1,13 +1,13 @@
-from rdflib import Namespace, Graph, SH, RDF
+from rdflib import Graph, BNode, SH, RDF
 import csv
 
 # Helper to parse SHACL validation report
-def parse_validation_report(conforms, results_graph, results_text):
+def parse_validation_report(conforms, results_graph, results_text, shacl_graph):
     """
-    Parses the SHACL validation graph into a flat dictionary for CSV logging.
+    Parses the SHACL validation graph into a flat dictionary.
+    REQUIRES 'shacl_graph' to resolve Blank Node names!
     """
-
-    # If it passed, return a clean success record
+        
     if conforms:
         return {
             "violation_count": 0,
@@ -16,30 +16,42 @@ def parse_validation_report(conforms, results_graph, results_text):
             "full_report": "Conforms: True"
         }
 
-    # If it failed, extract details from the graph
     failed_shapes = set()
     messages = []
 
-    # Find all nodes of type sh:ValidationResult
-    for result_node in results_graph.subjects(RDF.type, SH.ValidationResult):
+    for result_node in results_graph.subjects(RDF.type, SH.ValidationResult):        
+        # 1. Get the Source Shape (The specific constraint that failed)
+        source_shape = results_graph.value(result_node, SH.sourceShape)        
+        shape_name = "Unknown"
         
-        # Extract the Shape Name (Source Shape) should return a URI like http://example.org/income_shape
-        source_shape = results_graph.value(result_node, SH.sourceShape)
         if source_shape:
-            # Split to get just "income_shape"
-            shape_name = str(source_shape).split("/")[-1].split("#")[-1]
+            # Handle Blank Nodes
+            if isinstance(source_shape, BNode):
+                # Look upstream in the SHACL file to find the parent NodeShape
+                # We check for the two most common parents: sh:property or sh:sparql
+                parent = list(shacl_graph.subjects(SH.property, source_shape))
+                if not parent:
+                    parent = list(shacl_graph.subjects(SH.sparql, source_shape))
+                
+                if parent:
+                    # Found the Named Parent! (e.g., ex:valid_academic_id_shape)
+                    shape_name = str(parent[0]).split("#")[-1].split("/")[-1]
+            else:
+                # It's a normal URI, extract the name directly
+                shape_name = str(source_shape).split("#")[-1].split("/")[-1]
+
             failed_shapes.add(shape_name)
 
-        # Extract the Message
+        # 2. Get the Message
         message = results_graph.value(result_node, SH.resultMessage)
         if message:
             messages.append(str(message))
 
     return {
         "violation_count": len(messages),
-        "failed_shapes": "; ".join(sorted(list(failed_shapes))), # Stringify for CSV
-        "messages": " | ".join(messages), # Stringify for CSV
-        "full_report": results_text # Keep raw text just in case
+        "failed_shapes": "; ".join(sorted(list(failed_shapes))),
+        "messages": " | ".join(messages),
+        "full_report": results_text
     }
     
 
@@ -86,6 +98,7 @@ def apply_mutations(base_graph, actions):
             pass
             
     return new_graph
+
 
 # Write to csv
 def flush_context_to_csv(context_dict, csv_file):

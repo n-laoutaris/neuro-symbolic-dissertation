@@ -8,6 +8,13 @@ import os
 _CLIENT = None
 _MODEL_NAME = None 
 
+class GeminiExhaustedException(Exception):
+    """
+    Raised when the Gemini API returns '429 Resource Exhausted' 
+    too many times consecutively, indicating the daily quota is hit.
+    """
+    pass
+
 def initialize_gemini_client(model_name):
     global _CLIENT, _MODEL_NAME
     _CLIENT = genai.Client()
@@ -65,18 +72,24 @@ def with_retries(func, *args, base_delay=4.0):
         except Exception as e:
             msg = str(e).lower()
             overloaded = "overloaded" in msg
-            exhausted = "exhausted" in msg            
+            exhausted = "exhausted" in msg      
+                  
             if overloaded:
                 overloads += 1
-                wait = base_delay * (2 ** overloads)
+                wait = min(base_delay * (2 ** overloads), 60.0)  # Exponential backoff, max 60s
                 print(f"Gemini overloaded {overloads} times, retrying in {wait:.1f}s...")
                 time.sleep(wait)
                 continue
+            
             elif exhausted:
+                overloads = 0   
                 exhaustions +=1
+                if exhaustions >=5: # Stop everything
+                    raise GeminiExhaustedException("Gemini daily quota likely exceeded (5x 429 errors).")
+                # if <5 exhaustions, wait a fixed time and retry
                 print(f"Gemini exhausted {exhaustions} times, waiting 1 minute and rerunning the code...")
-                time.sleep(60) 
-                overloads = 0                
+                time.sleep(60)              
                 continue          
-            # Anything else
-            raise
+            
+            # Anything else, crash immediately
+            raise e
