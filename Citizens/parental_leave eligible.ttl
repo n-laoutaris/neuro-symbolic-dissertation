@@ -1,0 +1,30 @@
+@prefix : <http://example.org/schema#> .
+@prefix ex: <http://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ==========================================
+# 1. THE APPLICANT (Dimitris)
+# ==========================================
+
+ex:Dimitris a :Applicant, :Person ;
+    # Personal Info
+    :birthDate "1990-05-15"^^xsd:date ; # 35 Years old
+    :hasChild ex:Nikolas ;
+    
+    # Employment Status
+    :hasEmployment ex:DimitrisJob .
+# ==========================================
+# 2. THE CHILD (Nikolas)
+# ==========================================
+
+ex:Nikolas a :Person ;
+    :birthDate "2022-03-10"^^xsd:date . 
+
+# ==========================================
+# 3. EMPLOYMENT RECORD
+# ==========================================
+
+ex:DimitrisJob a :EmploymentRecord ;
+    :employmentSector "Private" ;
+    :isActive true ;
+    :employmentStartDate "2023-01-01"^^xsd:date .

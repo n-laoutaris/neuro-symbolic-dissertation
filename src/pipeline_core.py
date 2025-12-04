@@ -76,14 +76,7 @@ def run_main_pipeline(ctx: dict, artifact_dir: str, progress_bar, DOCUMENT_NAME:
 
     # Parse JSON string
     info_model = json.loads(info_model_str)
-
-    # Get service name. As per the prompt, it's in the first line of the preconditions summary 
-    line = preconditions_summary.partition('\n')[0]
-    clean_line = line.replace("*", "").replace("#", "").strip() # Clean line from potential markdown characters
-    try:
-        service_name = re.findall(r'Title: (.+)', clean_line)[0].replace(" ", "_")
-    except:
-        service_name = DOCUMENT_NAME # fallback to default if extraction fails
+    service_name = DOCUMENT_NAME 
 
     triples = [PREFIXES]
     triples.append(f"ex:{service_name} a cpsv:PublicService .\n\n")
