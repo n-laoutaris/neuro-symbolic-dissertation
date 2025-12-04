@@ -3,42 +3,149 @@
 
 \section{Introduction}
 This chapter details the Systematic Literature Review (SLR) conducted to establish the theoretical foundations of Neuro-Symbolic AI.
+This chapter analyzes the current state of research in Neuro-Symbolic AI, specifically focusing on how Large Language Models (LLMs) and Knowledge Graphs (KGs) are combined to automate public services.
+We aim to identify existing approaches for extracting rules from text and generating formal logic (SPARQL/SHACL), highlighting the lack of rigorous regression testing frameworks in current literature.
 
 \section{Methodology}
-
-PRISMA guidelines.
+We used PRISMA guidelines. Overview of the process?
 
 \subsection{Research Questions}
+The primary objective of this review is to investigate the applications and reliability of Neuro-Symbolic AI. To achieve this, we defined three specific Research Questions (RQs) that guide the data extraction and synthesis process:
+\begin{itemize}
+    \item \textbf{RQ1:} How are Large Language Models (LLMs) currently utilized to extract structured knowledge (RDF, Ontologies) from unstructured domain text?
+    \item \textbf{RQ2:} What are the state-of-the-art approaches for translating natural language requirements into formal validation logic (such as SPARQL, SHACL, or SWRL)?
+    \item \textbf{RQ3:} What methodologies exist for validating the semantic accuracy and syntactic correctness of LLM-generated logic?
+\end{itemize}
+RQ1 explores the initial phase of the pipeline (Text-to-Graph), while RQ2 focuses on the core challenge of logic generation. RQ3 allows us to critically analyze how existing studies ensure trust and correctness, identifying the gap that this dissertation aims to address.
 
-\subsection{Research Strategy}
-Database: Scopus
-Date Range: 2023--2026
-Language: English
-Query: ( "Large Language Model" OR "LLM" ) AND ( "SHACL" OR "SPARQL" ) AND ( "Semantic Web" OR "Knowledge Graph" )
+\subsection{Search Strategy}
+To identify relevant primary studies, we conducted an automated search on the \textbf{Scopus} database. 
+Scopus was selected as the primary source due to its extensive coverage of computer science, information systems, and semantic web literature.
+The search was executed in \textbf{December 2025}.
+The search query was constructed to find the intersection of Generative AI and Semantic Web technologies. We employed Boolean logic to combine three key conceptual blocks:
+\begin{enumerate}
+    \item \textbf{Generative AI Terms:} ("Large Language Model" OR "LLM")
+    \item \textbf{Target Logic/Language:} ("SHACL" OR "SPARQL")
+    \item \textbf{Symbolic Context:} ("Semantic Web" OR "Knowledge Graph")
+\end{enumerate}
+These blocks were combined using the \texttt{AND} operator. The final search string applied to the Title, Abstract, and Keywords fields was:
+\begin{quote}
+\texttt{( "Large Language Model" OR "LLM" ) AND ( "SHACL" OR "SPARQL" ) AND ( "Semantic Web" OR "Knowledge Graph" )}
+\end{quote}
+To ensure the review captured the most recent advancements, we applied strict metadata filters during the retrieval phase:
+\begin{itemize}
+    \item \textbf{Date Range:} \textbf{2023--2026}. This narrow window was selected because the application of Large Language Models to formal constraint languages (like SHACL) is a nascent field that emerged primarily after the widespread adoption of GPT-4 class models.
+    \item \textbf{Language:} \textbf{English}. Only papers written in English were considered to ensure consistent analysis of terminology.
+    \item \textbf{Document Type:} We focused on Articles and Conference Papers, excluding trade journals and errata.
+\end{itemize}
+This search strategy yielded an initial set of candidates which were then subjected to the screening process described in the following section.
 
 \subsection{Inclusion/Exclusion Criteria}
-During screening:
-Exclude usage of KGs for XAI. Include explainability if it's tested on our use case.
-Exclude Conference Proceedings Entries.
-Include SPARQL query generation by LLM from natural language questions. 
-Exclude graph entity alignment.
-Exclude "conceptual", "theoretical" and "preliminary results".
-Exclude opposite flow: using LLM to produce natural language FROM SPARQL.
-Exclude off-topic usage of LLMs (e.g. not as part of the same data pipeline as the KGs).
-Exclude comparisons between LLM approaches and Semantic web approaches.
-Include prompt engineering comparisons (for the same task as our pipeline). Exclude it for different or generic applications.
-Include fine-tuning for use with KGs. Exclude otherwise.
-Exclude subgraph extraction by LLM.
+To ensure the review focused specifically on the intersection of generative AI and structured compliance validation, we established strict inclusion and exclusion criteria. These were applied in two phases: initially to Titles and Abstracts (Practical Screening), and subsequently to Full Texts (Quality Screening).
+Table \ref{tab:criteria} summarizes the criteria used to select primary studies.
+\begin{table}[htbp]
+    \centering
+    \caption{Inclusion and Exclusion Criteria}
+    \label{tab:criteria}
+    \renewcommand{\arraystretch}{1.3} % Adds breathing room to rows
+    \resizebox{\textwidth}{!}{% Resize to fit page width
+    \begin{tabular}{|p{0.15\textwidth}|p{0.4\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Category} & \textbf{Inclusion Criteria} & \textbf{Exclusion Criteria} \\ \hline
+        
+        \textbf{Domain} & 
+        \textbf{Normative Domains:} Public Administration, Law, Regulatory Compliance, domain-agnostic pipelines. & 
+        \textbf{Descriptive Domains:} Natural sciences, where the goal is pattern discovery rather than rule validation. \\ \hline
+        
+        \textbf{Task Focus} & 
+        Text-to-Graph extraction, Text-to-SPARQL/SHACL generation, GraphRAG architectures. & 
+        Pure NLP (summarization), Chatbots without symbolic grounding, low-level graph mechanics (Entity Alignment, Link Prediction), Subgraph Extraction. \\ \hline
+        
+        \textbf{Methodology} & 
+        Neuro-Symbolic architectures (LLM + KG), Prompt Engineering for logic generation, Fine-tuning for query translation. & 
+        Traditional Machine Learning (non-generative), Reinforcement Learning without LLMs. \\ \hline
+        
+        \textbf{Data Flow} & 
+        \textbf{Forward:} Transforming unstructured text into formal logic or structured data (Text $\rightarrow$ Logic). & 
+        \textbf{Reverse:} Transforming structured data into natural language (Verbalization/Explanation) or pure retrieval without validation. \\ \hline
 
+        \textbf{Mode} & 
+        Textual inputs with or without pre-processing. & 
+        Multimodal studies (Speech/Image), Computer Vision. \\ \hline
+        
+        \textbf{Type} & 
+        Peer-reviewed Articles and Conference Papers. & 
+        Conference Proceedings (Meta-entries), Posters, Editorials, non-English papers. \\ \hline
+    \end{tabular}
+    }
+\end{table}
+
+Of the papers sought, some could not be retrieved due to access restrictions. The remaining articles were assessed for eligibility. 
+In this phase, we applied rigorous quality exclusion criteria (QE) to ensure the selected studies contributed specifically to the Neuro-Symbolic compliance pipeline:
+\begin{itemize}
+    \item \textbf{QE1 (Domain Misalignment):} We excluded studies that relied too heavily on the domain specifics and could not be generalized well.
+    \item \textbf{QE2 (Study Maturity \& Focus):} We excluded studies that were primarily \textit{benchmarking reports} or \textit{preliminary experiments}. While relevant to the broader field, these papers focused on specific performance metrics rather than proposing novel architectural pipelines.
+    \item \textbf{QE3 (Task Relevance):} We excluded studies lacking a specific validation or compliance component.
+\end{itemize}
+The next section summarizes the results following this quality assessment.
 
 \section{Results}
-Results: 125
-Duplicates: 3
-Screened: 122
+From an initial set of 122 records, 14 studies were identified as meeting all eligibility criteria.
+
+\subsection{PRISMA Flow Diagram}
+The search and screening process is summarized in the PRISMA flow diagram (Figure \ref{fig:prisma}). 
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.9\textwidth]{images/prisma_flow_diagram.png}
+    \caption{PRISMA Flow Diagram of the selection process.}
+    \label{fig:prisma}
+\end{figure}
+
+\subsection{Data Extraction}
+Table \ref{tab:extraction_matrix} presents the data extraction summary for the 14 included studies. The studies are categorized by their primary contribution to the neuro-symbolic pipeline: (1) Domain-Specific Pipelines, (2) Automated Logic Generation, (3) Validation Frameworks, and (4) Retrieval (GraphRAG).
+
+\begin{table}[htbp]
+    \centering
+    \caption{Summary of Included Studies (Data Extraction)}
+    \label{tab:extraction_matrix}
+    \renewcommand{\arraystretch}{1.2} % Better row spacing
+    \resizebox{\textwidth}{!}{% Auto-fit to page width
+    \begin{tabular}{|l|p{3cm}|p{2.5cm}|p{2.5cm}|p{4cm}|}
+        \hline
+        \textbf{Study} & \textbf{Domain / Input} & \textbf{Task} & \textbf{Target Logic} & \textbf{Validation Method} \\ \hline
+        
+        \multicolumn{5}{|c|}{\textit{Category 1: Domain-Specific Neuro-Symbolic Pipelines}} \\ \hline
+        Konstantinidis (2025) \cite{Konstantinidis2025} & Public Service Regulations & Framework Proposal & RDF + SHACL & Conceptual Prototype (No regression testing) \\ \hline
+        Hanuragav (2025) \cite{Hanuragav2025} & Clinical Study Reports & Compliance Check & SHACL + SPARQL & Deterministic Rule Execution \\ \hline
+        Oranekwu (2026) \cite{Oranekwu2026} & IoT Security (NIST) & Compliance Check & Ontology + SWRL & Ontology-driven Reasoning \\ \hline
+        Spyropoulos (2025) \cite{Spyropoulos2025} & Police Reports & Text-to-Graph & RDF Triples & Human-in-the-loop Verification \\ \hline
+
+        \multicolumn{5}{|c|}{\textit{Category 2: Automated Logic Generation (Text-to-Logic)}} \\ \hline
+        Walter (2026) \cite{Walter2026271} & General (Wikidata) & Text-to-SPARQL & SPARQL & Execution Accuracy (Zero-shot) \\ \hline
+        Soularidis (2024) \cite{Soularidis2024} & NL Rules & Text-to-SWRL & SWRL & LLM-assisted Generation \\ \hline
+        Jiang (2025) \cite{Jiang202528} & Scholarly QA & Text-to-SPARQL & SPARQL & Ontology-Guided Prompting \\ \hline
+        Mashhaditafreshi (2025) \cite{Mashhaditafreshi202536} & JSON Data & Modeling & SHACL Shapes & Human Evaluation of Models \\ \hline
+        Avila (2025) \cite{Avila2025223} & General QA & Text-to-SPARQL & SPARQL & Benchmark Execution (Auto-KGQA) \\ \hline
+
+        \multicolumn{5}{|c|}{\textit{Category 3: Validation \& Hallucination Control}} \\ \hline
+        Perevalov (2025) \cite{Perevalov2025563} & Multilingual QA & Query Filtering & SPARQL & LLM-based Probabilistic Filtering \\ \hline
+        Gashkov (2025) \cite{Gashkov2025177} & QA Systems & Query Judging & SPARQL & LLM-as-a-Judge \\ \hline
+        Tufek (2025) \cite{Tufek202592} & Industrial Standards & Requirement Translation & SPARQL & F1 Score on Logic Translation \\ \hline
+        
+        \multicolumn{5}{|c|}{\textit{Category 4: Retrieval Frameworks (GraphRAG)}} \\ \hline
+        Ongris (2025) \cite{Ongris2025116} & General (Wikidata) & GraphRAG & SPARQL & Jaccard Similarity \\ \hline
+        Ahmed Khan (2026) \cite{AhmedKhan2026} & Data Center Telemetry & Text-to-Query & SPARQL & Execution Accuracy vs NoSQL \\ \hline
+    \end{tabular}
+    }
+\end{table}
 
 \section{Thematic Analysis}
-\subsection{}
-\subsection{}
-\subsection{}
+\subsection{From Text to Structured Models}
+Current research demonstrates that LLMs are highly effective at the initial 'extraction' phase, successfully mapping unstructured text into RDF or SHACL skeletons.
+\subsection{Automated Logic Generation (Text-to-SPARQL)}
+Several studies focus on translating natural language directly into query languages. Walter et al. achieved state-of-the-art results in zero-shot SPARQL generation, while Soularidis et al. explored generating SWRL rules. However, these approaches often struggle with complex, nested logic without guidance.
+\subsection{Validation and Hallucination Control}
+A critical challenge is ensuring the generated logic is correct. Perevalov et al. propose using an LLM to 'judge' or filter the SPARQL queries. In contrast, Tufek et al. use F1 scores against a gold standard. Crucially, most existing validation methods are probabilistic (LLM-based) rather than deterministic.
 
 \section{Discussion and Research Gap}
+While the literature shows success in extraction (2.4.1) and generation (2.4.2), there is a gap in deterministic validation. Papers like Konstantinidis propose the theoretical framework for public services, and Hanuragav applies similar logic to clinical reports. However, no study has yet implemented a comprehensive Mutation Testing framework to rigorously test the structural stability of LLM-generated SHACL shapes for public service eligibility. This dissertation fills that gap.

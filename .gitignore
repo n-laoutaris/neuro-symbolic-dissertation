@@ -26,6 +26,7 @@ npm-debug.log*
 ~$*
 
 # LaTeX build artifacts
+*.pdf
 *.aux
 *.fdb_latexmk
 *.fls
