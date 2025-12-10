@@ -1,7 +1,6 @@
 # Standard library imports
 import json
 import time
-import re
 from typing import List
 from pydantic import BaseModel
 from rdflib import Graph, Namespace
