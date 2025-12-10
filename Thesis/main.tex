@@ -1,33 +1,47 @@
-% --- CONFIGURATION START ---
-\documentclass[12pt, a4paper]{report} % TODO: Change 'report' later
+% file: thesis/main.tex
+\documentclass[12pt, a4paper, twoside]{report}
 
-% Essential Packages
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}      % For images
-\usepackage{geometry}      % For margins
-\usepackage{hyperref}      % For clickable links in PDF
-\usepackage[style=ieee]{biblatex} % For references
+% Import your custom template
+\usepackage{ihu_thesis}
+
+% Import your bibliography database
 %\addbibresource{references.bib}
-
-% --- CONFIGURATION END ---
 
 \begin{document}
 
-% 1. Title Page (Placeholder)
+% --- FRONT MATTER (Roman Numerals) ---
+\pagenumbering{roman}
+
+% TODO: Inject the official-looking cover pages here
+%\includepdf[pages=-]{images/cover.pdf}
+
+% Title Page (Placeholder)
 \title{Exploring Neuro-symbolic Pipelines for Structured Knowledge Extraction}
 \author{Nikolaos Laoutaris}
 \date{\today}
 \maketitle
 
-% 2. Table of Contents (Auto-generated)
+% Abstract
+\include{Chapters/00_abstract}
+
+% Table of Contents (Auto-generated)
 \tableofcontents
 
-% 3. The Content (Remember: No styling here, just imports)
-\include{Chapters/00_abstract}
+% --- MAIN CONTENT (Arabic Numerals) ---
+\pagenumbering{arabic} 
+\setcounter{page}{1} % Resets page count to 1 for the Introduction
+
 \include{Chapters/01_introduction}
 \include{Chapters/02_slr}
+\include{Chapters/03_pilot}
+\include{Chapters/04_results}
+\include{Chapters/05_discussion}
+\include{Chapters/06_limitations-future}
 
-% 4. Bibliography
-% \printbibliography
+% --- BACK MATTER ---
+% \printbibliography[heading=bibintoc, title={Bibliography}]
+
+\appendix
+\include{Chapters/appendices}
 
 \end{document}

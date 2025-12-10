@@ -1,0 +1,79 @@
+% file: thesis/ihu_thesis.sty
+\ProvidesPackage{ihu_thesis}
+
+% --- 1. PAGE LAYOUT ---
+% Margins: Top/Bottom/Outer=25mm, Inner=35mm (25+10 gutter)
+\usepackage[top=25mm, bottom=25mm, outer=25mm, inner=35mm]{geometry}
+
+% --- 2. FONTS & ENCODING ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tgtermes} 
+\usepackage[scale=0.95]{tgheros} % Use TeX Gyre Heros (A modern, sharper Arial/Helvetica clone)
+\usepackage{newtxmath} % Use NewTX Math to make math equations match Times New Roman perfectly
+\usepackage{microtype}      % Improves text justification
+
+% --- 3. PARAGRAPH & SPACING ---
+\usepackage{setspace}
+\onehalfspacing             % 1.5 Line Spacing
+\usepackage{enumitem}
+\setlist{nosep} % Kills vertical space between list items and around the list
+
+% --- 4. HEADINGS (Matching Word Styles) ---
+\usepackage{titlesec}
+\setcounter{secnumdepth}{2} 
+
+% H1: Chapter (Arial 28 Bold) - "1 Introduction" (No "Chapter" word)
+\titleformat{\chapter}[block] 
+  {\normalfont\sffamily\fontsize{28}{34}\selectfont\bfseries} % Format
+  {\thechapter}                                               % Label (Just the number)
+  {1em}                                                       % Space between Number and Title
+  {}                                                          % Code before title
+\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+
+% H2: Section (Arial 17 Bold)
+\titleformat{\section}
+  {\normalfont\sffamily\fontsize{17}{22}\selectfont\bfseries}
+  {\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{18pt}{6pt} % Increased top space slightly for visual separation
+
+% H3: Subsection (Arial 13 Bold)
+\titleformat{\subsection}
+  {\normalfont\sffamily\fontsize{13}{16}\selectfont\bfseries}
+  {\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+
+% H4: Subsubsection (Arial 12 Bold) - Unnumbered
+\titleformat{\subsubsection}
+  {\normalfont\sffamily\fontsize{12}{14}\selectfont\bfseries}
+  {}{0pt}{} 
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+
+% H5: Paragraph (Times 12 Bold Italic) - Unnumbered
+\titleformat{\paragraph}
+  {\normalfont\rmfamily\fontsize{12}{14}\selectfont\bfseries\itshape}
+  {}{0pt}{}
+\titlespacing*{\paragraph}{0pt}{12pt}{6pt}
+
+% --- 5. CAPTIONS (Pictures & Tables) ---
+\usepackage[font={small,rm}, labelfont=bf, labelsep=colon]{caption} 
+
+% Rename "Figure" to "Picture"
+\captionsetup[figure]{name=Picture} 
+
+% Set 12pt space (approx 1 blank line) between caption and content
+\captionsetup{skip=12pt}
+
+% Force positioning
+\captionsetup[table]{position=top}
+\captionsetup[figure]{position=bottom}
+
+% --- 6. ESSENTIAL PACKAGES ---
+\usepackage{graphicx}      % Images
+\usepackage{float}         % Better image placement
+\usepackage{csquotes}      % Context sensitive quotes
+\usepackage{pdfpages}      % To inject the Word cover page
+\usepackage[hidelinks]{hyperref} % Clickable links (black)
+
+% --- 7. BIBLIOGRAPHY SETUP ---
+\usepackage[style=ieee, backend=biber]{biblatex}
