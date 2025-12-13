@@ -1,0 +1,78 @@
+
+    @prefix : <http://example.org/schema#> .
+    @prefix ex: <http://example.org/> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    
+
+# =================================================================
+# SHACL Shapes for Applicant Validation
+# =================================================================
+
+ex:employment_status_and_sector_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Applicant must be actively employed in the private or public sector." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                # This constraint fails if there is NOT AT LEAST ONE employment record
+                # that is both active and in the private or public sector.
+                FILTER NOT EXISTS {
+                    ?this :hasEmployment ?employment .
+                    ?employment :isActive true ;
+                                :employmentSector ?sector .
+                    FILTER(?sector = "Private" || ?sector = "Public")
+                }
+            }
+        """ ;
+    ] .
+
+ex:employment_duration_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Applicant must have at least one employment record with 12 or more months of continuous service." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                # This constraint fails if there is NOT AT LEAST ONE employment record
+                # that started 12 or more months ago.
+                FILTER NOT EXISTS {
+                    ?this :hasEmployment ?employment .
+                    ?employment :employmentStartDate ?startDate .
+                    
+                    # Calculate duration in months
+                    BIND( ((YEAR(now()) * 12 + MONTH(now())) - (YEAR(?startDate) * 12 + MONTH(?startDate))) as ?durationInMonths) .
+                    
+                    FILTER(?durationInMonths >= 12)
+                }
+            }
+        """ ;
+    ] .
+
+ex:child_age_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Applicant's child must be under the age of 8." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                ?this :hasChild ?child .
+                ?child :birthDate ?birthDate .
+                
+                # Calculate age in years
+                BIND( (YEAR(now()) - YEAR(?birthDate)) as ?ageInYears) .
+                
+                # The constraint is violated if any child is 8 or older.
+                FILTER(?ageInYears >= 8)
+            }
+        """ ;
+    ] .

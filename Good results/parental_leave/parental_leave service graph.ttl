@@ -1,0 +1,25 @@
+@prefix ex: <http://example.org/> .
+    @prefix cccev: <http://data.europa.eu/m8g/> .
+    @prefix cpsv: <http://purl.org/vocab/cpsv#> .
+    @prefix dct: <http://purl.org/dc/terms/> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+    ex:parental_leave a cpsv:PublicService .
+
+ex:parental_leave cpsv:holdsRequirement ex:employment_status_and_sector_condition .
+ex:employment_status_and_sector_condition a cccev:Constraint ; dct:description "The beneficiary must be employed under a dependent employment relationship or a salaried mandate in the private or public sector." .
+ex:employment_status_and_sector_condition cccev:constrains ex:employment_sector .
+ex:employment_sector a cccev:InformationConcept .
+ex:employment_status_and_sector_condition cccev:constrains ex:is_currently_employed .
+ex:is_currently_employed a cccev:InformationConcept .
+
+ex:parental_leave cpsv:holdsRequirement ex:employment_duration_condition .
+ex:employment_duration_condition a cccev:Constraint ; dct:description "The beneficiary must have completed at least one (1) year of continuous employment (or successive fixed-term contracts) with the same employer." .
+ex:employment_duration_condition cccev:constrains ex:employment_start_date .
+ex:employment_start_date a cccev:InformationConcept .
+
+ex:parental_leave cpsv:holdsRequirement ex:child_age_condition .
+ex:child_age_condition a cccev:Constraint ; dct:description "The beneficiary's child must be under the age of eight (8)." .
+ex:child_age_condition cccev:constrains ex:child_birth_date .
+ex:child_birth_date a cccev:InformationConcept .
+

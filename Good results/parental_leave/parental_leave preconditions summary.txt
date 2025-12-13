@@ -1,0 +1,5 @@
+Title: Parental Leave Allowance
+Conditions:
+- The beneficiary must be employed under a dependent employment relationship or a salaried mandate in the private or public sector.
+- The beneficiary must have completed at least one (1) year of continuous employment (or successive fixed-term contracts) with the same employer.
+- The beneficiary's child must be under the age of eight (8).

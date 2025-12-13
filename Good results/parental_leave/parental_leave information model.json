@@ -1,0 +1,68 @@
+[
+  {
+    "name": "employment_status_and_sector_condition",
+    "desc": "The beneficiary must be employed under a dependent employment relationship or a salaried mandate in the private or public sector.",
+    "constrains": [
+      {
+        "name": "employment_sector",
+        "related_paths": [
+          {
+            "path": [
+              "hasEmployment",
+              "employmentSector"
+            ],
+            "datatype": "xsd:string"
+          }
+        ]
+      },
+      {
+        "name": "is_currently_employed",
+        "related_paths": [
+          {
+            "path": [
+              "hasEmployment",
+              "isActive"
+            ],
+            "datatype": "xsd:boolean"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "employment_duration_condition",
+    "desc": "The beneficiary must have completed at least one (1) year of continuous employment (or successive fixed-term contracts) with the same employer.",
+    "constrains": [
+      {
+        "name": "employment_start_date",
+        "related_paths": [
+          {
+            "path": [
+              "hasEmployment",
+              "employmentStartDate"
+            ],
+            "datatype": "xsd:date"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "child_age_condition",
+    "desc": "The beneficiary's child must be under the age of eight (8).",
+    "constrains": [
+      {
+        "name": "child_birth_date",
+        "related_paths": [
+          {
+            "path": [
+              "hasChild",
+              "birthDate"
+            ],
+            "datatype": "xsd:date"
+          }
+        ]
+      }
+    ]
+  }
+]
