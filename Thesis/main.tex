@@ -1,11 +1,11 @@
 % file: thesis/main.tex
-\documentclass[12pt, a4paper, twoside]{report}
+\documentclass[12pt, a4paper, twoside, openright]{report}
 
 % Import your custom template
 \usepackage{ihu_thesis}
 
 % Import your bibliography database
-%\addbibresource{references.bib}
+\addbibresource{references.bib}
 
 \begin{document}
 
@@ -15,22 +15,15 @@
 % TODO: Inject the official-looking cover pages here
 %\includepdf[pages=-]{images/cover.pdf}
 
-% Title Page (Placeholder)
-\title{Exploring Neuro-symbolic Pipelines for Structured Knowledge Extraction}
-\author{Nikolaos Laoutaris}
-\date{\today}
-\maketitle
-
 % Abstract
 \include{Chapters/00_abstract}
 
 % Table of Contents (Auto-generated)
 \tableofcontents
+\listoffigures  
+\listoftables 
 
-% --- MAIN CONTENT (Arabic Numerals) ---
-\pagenumbering{arabic} 
-\setcounter{page}{1} % Resets page count to 1 for the Introduction
-
+% --- MAIN CONTENT ---
 \include{Chapters/01_introduction}
 \include{Chapters/02_slr}
 \include{Chapters/03_pilot}
@@ -39,7 +32,7 @@
 \include{Chapters/06_limitations-future}
 
 % --- BACK MATTER ---
-% \printbibliography[heading=bibintoc, title={Bibliography}]
+\printbibliography[heading=bibintoc, title={Bibliography}]
 
 \appendix
 \include{Chapters/appendix_placeholder}

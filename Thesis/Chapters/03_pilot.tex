@@ -6,6 +6,7 @@ The methodology is structured around a "Text-to-Graph-to-Logic" workflow. The sy
 The chapter is organized as follows: Section \ref{subsec:semantic_modelling} defines the semantic schemas that ground the system. Section \ref{subsec:pipeline} details the four-stage extraction and generation pipeline. Section \ref{subsec:validation_engine} describes the validation engine, and Section \ref{sec:experimental_design} outlines the experimental framework used to stress-test the system's logical capabilities through automated mutation testing.
 
 \section{Methodology and System Architecture}
+Test reference \cite{repo_key}.
 
 \subsection{Setup Environment}
 The pipeline was implemented using Python 3.12.9, utilizing a modular architecture to separate core processing logic from experimental orchestration. The system relies local processing for semantic graph operations and cloud-based APIs for Large Language Model inference.
@@ -39,18 +40,18 @@ The adoption of established EU standards is a deliberate architectural choice, m
 
 \subsubsection{Citizen Schema} \label{subsec:citizen_schema}
 While the Public Service Meta-Model describes the \textit{rules}, the Citizen Schema describes the \textit{applicant}. This work utilizes a domain-specific RDFS schema tailored to the requirements of each document and generated in a separate workflow (not presented here) by the same LLM used in the implementation of the rest of the pipeline. The model is instructed to use granular instead of aggregate data as nodes (e.g. prefer "Date of Birth" rather than "Age") and is encourgaed to use abstract and reusable classes. \par
-It has been demonstrated that the generation of such schemas can be automated as part of the pipeline (cite Konstantinidis). However, for the scope of this pilot study, the Citizen Schema is treated as fixed input context. This methodological choice serves two purposes: 
+It has been demonstrated that the generation of such schemas can be automated as part of the pipeline \cite{Konstantinidis2025}. However, for the scope of this pilot study, the Citizen Schema is treated as fixed input context. This methodological choice serves two purposes: 
 \begin{enumerate} 
     \item \textbf{Experimental Control:} By fixing the target schema, we isolate the performance of the LLM in \textit{logic generation} (SHACL/SPARQL) and \textit{extraction}, without the confounding variable of schema generation errors.
     \item \textbf{Prerequisite for Testing:} The automated testing framework relies on injecting specific faults into the citizen graph (e.g., modifying property values to trigger violations). This requires a deterministic, known-in-advance schema structure; had the schema been generated dynamically during each run, it would be impossible to define a static library of test scenarios targeting specific graph nodes. 
 \end{enumerate}
 
 \subsection{The Extraction and Generation Pipeline} \label{subsec:pipeline}
-The core contribution of this work is the following multi-stage, neuro-symbolic pipeline. The process follows a sequential data flow, depicted in Figure \ref{fig:pipeline}, consisting of four primary  stages.
+The core contribution of this work is the following multi-stage, neuro-symbolic pipeline. The process follows a sequential data flow, depicted in Figure \ref{fig:pipeline}, consisting of four primary stages.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{Images/Pipeline.png}
-    \caption{Flow Chart of the core pipeline.}
+    \caption{Flow Chart of the core pipeline}
     \label{fig:pipeline}
 \end{figure}
 

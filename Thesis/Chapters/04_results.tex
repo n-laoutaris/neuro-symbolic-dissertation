@@ -1,15 +1,177 @@
 \chapter{Results}
-Here we will only give facts, numbers, graphs. No explanations and opinions.
+This chapter presents the quantitative findings obtained from the experimental evaluation of the neuro-symbolic pipeline. The analysis strictly follows the performance metrics defined in the methodology, assessing the system across three cascading thresholds of success: syntactic validity (code generation), functional logic accuracy (reasoning fidelity), and overall operational reliability (end-to-end feasibility). Broader interpretation of these patterns and their implications for public administration systems are discussed in Chapter \ref{ch:discussion}.
 
-\section{Syntax Validity}
-Present statistical data on how often the pipeline generated syntactically valid RDF and SPARQL code under different configurations.
+\section{Experimental Dataset}
+The experimental campaign consisted of a total of 170 end-to-end pipeline executions ("Runs"). Each run consisted of the steps that were analyzed on the previous chapter. The distribution of these runs across the varying configurations is detailed in Table \ref{tab:experiment_counts}. Due to the operational constraints discussed in Section \ref{subsec:api_limits}, the dataset is unbalanced, with the "Flash" model variant accounting for a larger proportion of the total runs.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Distribution of Experimental Runs per Configuration}
+    \label{tab:experiment_counts}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{lllc}
+        \toprule
+        \textbf{Document} & \textbf{Model} & \textbf{Prompt Strategy} & \textbf{Runs ($N$)} \\
+        \midrule
+        \multirow{6}{*}{Parental Leave} & \multirow{3}{*}{gemini-2.5-flash} & Default & 20 \\
+         & & Reflexion & 20 \\
+         & & ZeroShot & 20 \\
+         \cmidrule{2-4}
+         & \multirow{2}{*}{gemini-2.5-pro} & Default & 10 \\
+         & & ZeroShot & 10 \\
+        \midrule
+        \multirow{6}{*}{Student Housing} & \multirow{3}{*}{gemini-2.5-flash} & Default & 20 \\
+         & & Reflexion & 20 \\
+         & & ZeroShot & 20 \\
+         \cmidrule{2-4}
+         & \multirow{3}{*}{gemini-2.5-pro} & Default & 10 \\
+         & & Reflexion & 10 \\
+         & & ZeroShot & 10 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Syntactic Validity}
+The first criterion for the pipeline's utility is the generation of syntactically valid code. A run is considered "Syntactically Valid" only if the LLM produces a Turtle (\texttt{.ttl}) file that can be parsed by RDFLib \textit{and} contains SPARQL constraints that successfully compile without syntax errors. 
+
+\subsection{Success Rate}
+Figure \ref{fig:syntax_reliability} illustrates the success rates across all configurations.
+
+\begin{figure}[htbp] 
+    \centering 
+    \includegraphics[width=1.0\textwidth]{Images/Syntax Reliability.png} 
+    \caption{Syntactic Validity Rates by Configuration} 
+    \label{fig:syntax_reliability} 
+\end{figure}
+
+\subsubsection{Impact of Document Complexity} 
+The complexity of the source document served as a strong predictor of failure.\par
+In the case of the Parental Leave document (Intermediate complexity), both models performed adequately. Even the weaker Flash model achieved a 75\% validity rate using the Reflexion and ZeroShot strategies. \par
+On the contrary, the Student Housing document (High complexity) acted as a strict filter. Flash failed to produce valid code in the vast majority of attempts (36 out of 60 runs failed syntax checks), whereas Pro proved strong enough to handle the increased logical depth, though it still suffered a 20\% degradation compared to the simpler use case.
+
+\subsubsection{Impact of Model Class} 
+The data reveals a disparity in coding capability between the two model variants.\par
+The Gemini 2.5 Pro model demonstrated high reliability, achieving a 100\% success rate on the Parental Leave document and maintaining an 80\% success rate on the complex Student Housing document (under Default prompting). \par
+In contrast, the Gemini 2.5 Flash model struggled significantly with syntactic precision. While it achieved moderate success on the simpler Parental Leave document (ranging from 50\% to 75\%), its performance collapsed on the complex Student Housing document, with success rates dropping as low as 5\% (Reflexion) to 20\% (Default).
+
+\subsubsection{Impact of Prompting Strategy} 
+The impact of prompting strategies varied by model architecture.\par
+For Flash, the \textit{Reflexion} strategy provided a significant boost on the simpler document (improving validity from 50\% to 75\%). However, this benefit vanished on the complex document, where Reflexion actually performed worse (5\%) than the Default prompt (20\%). \par
+For Pro, the \textit{Default} and \textit{Reflexion} strategies performed identically (80\% on Housing), while the \textit{ZeroShot} strategy resulted in a notable drop in stability (falling to 60\% on Housing). 
+
+\subsection{Failure Mode Analysis} 
+To better understand the mechanisms of failure, the invalid runs were categorized by error type: \textit{RDF Syntax Errors} (invalid Turtle file structure) and \textit{SPARQL Syntax Errors} (malformed queries within valid Turtle). Figure \ref{fig:error_analysis} presents the error rates normalized by the total number of runs for each model-document pair. 
+
+\begin{figure}[htbp] 
+    \centering 
+    \includegraphics[width=1.0\textwidth]{Images/Syntax Error Analysis.png} 
+    \caption{Distribution of Syntax Error Types by Model and Document} 
+    \label{fig:error_analysis} 
+\end{figure} 
+
+The data indicates that SPARQL Syntax Errors were the dominant failure mode across all configurations. \par
+Gemini 2.5 Flash exhibited a high frequency of SPARQL errors, particularly on the complex Student Housing document, where 76.7\% of all runs failed due to query syntax. Notably, Flash also produced a non-negligible rate of RDF Syntax errors (5.0\% on Parental Leave, 11.7\% on Student Housing), indicating occasional failures in generating even the fundamental file structure. \par
+Gemini 2.5 Pro demonstrated significantly higher stability. It produced zero RDF syntax errors across all 50 experiments. Its failures were exclusively confined to SPARQL syntax, with error rates of 5.0\% on the simpler document and 26.7\% on the complex document.
 
 \section{Logic Validity}
-Report the scores and figures for the pipeline logic accuracy, maybe highlighting the discrepancy between "Syntax Success" and "Logic Success." Should further elaborate on failed cases.
+For the subset of runs that successfully produced syntactically valid code, the focus shifts to \textit{Functional Logic Accuracy}. A run is classified as having "Perfect Logic" if and only if the generated SHACL shapes correctly identify the expected number of violations for \textit{every single scenario} in the test suite (both the baseline Golden Citizen and all edge cases). Runs that crashed during execution or failed syntax checks were excluded from this analysis to isolate the reasoning capability of the models.
 
-\section{Pipeline Reliability}
-An aggregation of overall pipeline feasibility combining syntax and logic. 
+\subsection{Success Rate}
+Figure \ref{fig:logic_reliability} illustrates the rate of flawless logical execution across configurations.
+
+\begin{figure}[htbp] 
+    \centering 
+    \includegraphics[width=1.0\textwidth]{Images/Logic Reliability.png} 
+    \caption{Logic Validity: Percentage of Flawless Runs (All Scenarios Correct)} 
+    \label{fig:logic_reliability} 
+\end{figure}
+
+\subsubsection{Impact of Document Complexity}
+Consistent with the syntax results, the complexity of the document was the primary determinant of success. \par
+Parental Leave, having simpler logic, allowed for high performance, with the best-performing configuration (Flash/Default) achieving an 88.9\% perfect run rate. \par
+Student Housing and its complex logic requirements caused a near-total collapse in functional accuracy. Across all models and prompts, the highest achieved success rate was only 33.3\%, with many configurations failing to produce a single logically correct run.
+
+\subsubsection{Impact of Model Class}
+The performance relationship between models \textit{inverted} depending on the task. \par
+On the simple document, Flash significantly outperformed Pro, achieving 88.9\% accuracy (Default) compared to Pro's 11.1\%. However, on the complex document, Flash failed completely, with a 0.0\% success rate across all 60 attempts. \par
+While Pro underperformed on the simple task, it was the only model capable of solving the complex Student Housing logic, achieving success rates between 12.5\% and 33.3\%.
+
+\subsubsection{Impact of Prompting Strategy}
+Removing examples (ZeroShot) caused a sharp drop in accuracy from 88.9\% to 15.4\% for Flash on the simple document. Conversely, for Pro on the complex document, ZeroShot unexpectedly yielded the highest accuracy (33.3\%). \par
+The self-correction strategy (Reflexion) did not yield consistent improvements. For Flash, it reduced accuracy from 88.9\% to 61.5\% on the simple document. For Pro, it performed roughly equivalent to the Default strategy.
+
+\subsection{The Syntax-Logic Gap}
+A comparison between the syntax validity rates (Figure \ref{fig:syntax_reliability}) and logic accuracy rates (Figure \ref{fig:logic_reliability}) reveals a distinct degradation in performance as the evaluation becomes stricter. This is apparent if we isolate the complex Student Housing use case. While the Pro model generated valid syntax in $\approx$80\% of runs, only $\approx$25\% of those valid runs contained correct logic. The Flash model struggled at both levels, with low syntax validity (20\%) and zero functional correctness (0\%).
+
+\section{Overall Pipeline Reliability} 
+Beyond specific syntax and logic metrics, this section evaluates the system's viability as an end-to-end automated service. The analysis considers two perspectives: the operational stability of the pipeline and its reliability inside the broader context of this work, which is public service recommendations.
+
+\subsection{Pipeline Feasibility and Attrition} 
+Figure \ref{fig:outcome_distribution} presents the distribution of final outcomes for all 170 experimental runs. This "Waterfall Analysis" categorizes every attempt into a single mutually exclusive outcome, revealing the attrition rate of the system.
+
+\begin{figure}[htbp] 
+    \centering 
+    \includegraphics[width=1.0\textwidth]{Images/Outcome Distribution.png} 
+    \caption{Distribution of Final Pipeline Outcomes.} 
+    \label{fig:outcome_distribution} 
+\end{figure}
+
+The data indicates a high attrition rate: 
+\begin{itemize} 
+    \item \textbf{Syntax Failures:} The majority of runs failed early. SPARQL Syntax Errors accounted for the largest share of failures (N=72), followed by RDF Syntax Errors (N=10). 
+    \item \textbf{Logic Failures:} Of the runs that compiled, a significant portion (N=55) produced code that executed but failed to correctly validate all test scenarios. 
+    \item \textbf{Success:} Only 25 runs (14.7\% of the total) achieved the status of a "Perfect Run," generating both valid syntax and flawless logic across all edge cases. 
+    \item \textbf{System Stability:} Operational crashes (Python/API errors) were rare (N=8), indicating that the underlying infrastructure, retry mechanisms and exception handling were largely sufficient. 
+\end{itemize}
+
+\subsection{Recommender System Accuracy}
+To evaluate the system's utility as a public service recommender, the validation outcomes were aggregated into a Confusion Matrix (Figure \ref{fig:recommender_matrix}). In this context, the classes are defined based on the goal of recommending eligible services:
+\begin{itemize} 
+    \item \textbf{Positive Class (Recommendation):} The system validates the citizen as Eligible. 
+    \item \textbf{Negative Class (Rejection):} The system flags at least one Violation.
+\end{itemize}
+To interpret the confusion matrix in the specific context of public service recommendations, the standard machine learning classifications were mapped to domain-specific service outcomes, as defined in Table \ref{tab:outcome_definitions}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Definition of Classification Outcomes in the Recommender Context}
+    \label{tab:outcome_definitions}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        & \textbf{System: "Violation"} & \textbf{System: "Conforms"} \\
+        & (Rejection) & (Recommendation) \\
+        & \textit{Triggered Violations $>$ 0} & \textit{Triggered Violations = 0} \\
+        \hline
+        \textbf{Citizen is Ineligible} & \textbf{True Negative (TN)} & \textbf{False Positive (FP)} \\
+        \textit{Expected Violations $>$ 0} & \textit{Correct Rejection} & \textit{Bad Recommendation} \\
+        & (System works) & (Trust Risk) \\
+        \hline
+        \textbf{Citizen is Eligible} & \textbf{False Negative (FN)} & \textbf{True Positive (TP)} \\
+        \textit{Expected Violations = 0} & \textit{Missed Opportunity} & \textit{Correct Recommendation} \\
+        & (Service Failure) & (System works) \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The confusion matrix is then created based on this terminology.
+
+\begin{figure}[htbp] 
+    \centering 
+    \includegraphics[width=0.8\textwidth]{Images/Recommender Confusion Matrix.png} 
+    \caption{Confusion Matrix of Eligibility Recommendations} 
+    \label{fig:recommender_matrix}
+\end{figure}
+
+The matrix reveals the system's risk profile: 
+\begin{itemize} 
+    \item \textbf{True Positives (10.5\%):} In 59 cases, the system correctly identified and recommended the service to an eligible citizen ("Correct Recommendation"). This confirms the system's ability to successfully validate legitimate claims when the generated logic is sound.
+    \item \textbf{False Positives (10.1\%):} In 57 cases, the system erroneously recommended the service to an ineligible citizen ("Bad Recommendation"). This represents a "Trust Risk," where users might be guided to apply for benefits they cannot receive. 
+    \item \textbf{True Negatives (75.6\%):} The system correctly rejected ineligible applicants in the majority of cases. 
+    \item \textbf{False Negatives (3.7\%):} In 21 cases, the system incorrectly rejected an eligible applicant ("Missed Opportunity"). While this number is low, it represents a "Service Failure," denying access to entitled benefits. 
+\end{itemize}
+what is important in this context?
 
 \section{Semantic Stability (nice-to-have)}
-If we have time to do it, this chapter will use data from the semantic similarity metrics drawn from past run artifacts on file.
+If we have time to do it, this chapter will use data from semantic similarity metrics drawn from past run artifacts on file.
 

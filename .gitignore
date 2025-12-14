@@ -33,6 +33,8 @@ npm-debug.log*
 *.synctex.gz
 *.out
 *.toc
+*.lof
+*.lot
 # Bibliography Artifacts
 *.bbl
 *.bcf

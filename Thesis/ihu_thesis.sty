@@ -23,6 +23,10 @@
 \usepackage{titlesec}
 \setcounter{secnumdepth}{2} 
 
+% --- 5. TABLES ---
+\usepackage{booktabs}
+\usepackage{multirow}
+
 % H1: Chapter (Arial 28 Bold) - "1 Introduction" (No "Chapter" word)
 \titleformat{\chapter}[block] 
   {\normalfont\sffamily\fontsize{28}{34}\selectfont\bfseries} % Format
@@ -57,9 +61,6 @@
 
 % --- 5. CAPTIONS (Pictures & Tables) ---
 \usepackage[font={small,rm}, labelfont=bf, labelsep=colon]{caption} 
-
-% Rename "Figure" to "Picture"
-\captionsetup[figure]{name=Picture} 
 
 % Set 12pt space (approx 1 blank line) between caption and content
 \captionsetup{skip=12pt}
