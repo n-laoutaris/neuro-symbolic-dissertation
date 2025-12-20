@@ -1,4 +1,3 @@
-% file: thesis/main.tex
 \documentclass[12pt, a4paper, twoside, openright]{report}
 
 % Import your custom template
@@ -13,15 +12,19 @@
 \pagenumbering{roman}
 
 % TODO: Inject the official-looking cover pages here
-%\includepdf[pages=-]{images/cover.pdf}
+\includepdf[pages=-]{Chapters/cover.pdf}
 
 % Abstract
 \include{Chapters/00_abstract}
 
 % Table of Contents (Auto-generated)
+\cleardoublepage      % Ensure we start on an odd (right) page
+\addcontentsline{toc}{chapter}{Contents} % Ensure it appears in ToC
 \tableofcontents
 \listoffigures  
 \listoftables 
+\newpage \ % An empty page because list of tables will always be right (and presumably only 1 page)
+\newpage
 
 % --- MAIN CONTENT ---
 \include{Chapters/01_introduction}

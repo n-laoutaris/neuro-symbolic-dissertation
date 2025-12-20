@@ -1,4 +1,5 @@
 \chapter{Results}
+\label{ch:results}
 This chapter presents the quantitative findings obtained from the experimental evaluation of the neuro-symbolic pipeline. The analysis strictly follows the performance metrics defined in the methodology, assessing the system across three cascading thresholds of success: syntactic validity (code generation), functional logic accuracy (reasoning fidelity), and overall operational reliability (end-to-end feasibility). Broader interpretation of these patterns and their implications for public administration systems are discussed in Chapter \ref{ch:discussion}.
 
 \section{Experimental Dataset}
@@ -74,7 +75,8 @@ Gemini 2.5 Flash exhibited a high frequency of SPARQL errors, particularly on th
 Gemini 2.5 Pro demonstrated significantly higher stability. It produced zero RDF syntax errors across all 50 experiments. Its failures were exclusively confined to SPARQL syntax, with error rates of 5.0\% on the simpler document and 26.7\% on the complex document.
 
 \section{Logic Validity}
-For the subset of runs that successfully produced syntactically valid code, the focus shifts to \textit{Functional Logic Accuracy}. A run is classified as having "Perfect Logic" if and only if the generated SHACL shapes correctly identify the expected number of violations for \textit{every single scenario} in the test suite (both the baseline Golden Citizen and all edge cases). Runs that crashed during execution or failed syntax checks were excluded from this analysis to isolate the reasoning capability of the models.
+For the subset of runs that successfully produced syntactically valid code, the focus shifts to \textit{Functional Logic Accuracy}. A run is classified as having "Perfect Logic" if and only if the generated SHACL shapes correctly identify the expected number of violations for \textit{every single scenario} in the test suite (both the baseline Golden Citizen and all edge cases). Runs that crashed during execution or failed syntax checks were excluded from this analysis to isolate the reasoning capability of the models. \par
+It is critical to note that 'Logic Accuracy' is evaluated as a holistic, end-to-end performance metric. A failure to correctly validate a citizen scenario may stem from errors at any stage of the neuro-symbolic pipeline: a missed precondition during the initial summarization (Stage 1), a malformed mapping in the Information Model (Stage 2), or an incorrect SHACL generation (Stage 4). Consequently, a 'Logic Failure' indicates that the system, as a whole, failed to enforce the regulation, regardless of which specific component was the root cause.
 
 \subsection{Success Rate}
 Figure \ref{fig:logic_reliability} illustrates the rate of flawless logical execution across configurations.
@@ -106,7 +108,7 @@ A comparison between the syntax validity rates (Figure \ref{fig:syntax_reliabili
 \section{Overall Pipeline Reliability} 
 Beyond specific syntax and logic metrics, this section evaluates the system's viability as an end-to-end automated service. The analysis considers two perspectives: the operational stability of the pipeline and its reliability inside the broader context of this work, which is public service recommendations.
 
-\subsection{Pipeline Feasibility and Attrition} 
+\subsection{Pipeline Feasibility and Attrition} \label{subsec:pipeline_attrition}
 Figure \ref{fig:outcome_distribution} presents the distribution of final outcomes for all 170 experimental runs. This "Waterfall Analysis" categorizes every attempt into a single mutually exclusive outcome, revealing the attrition rate of the system.
 
 \begin{figure}[htbp] 
@@ -124,7 +126,7 @@ The data indicates a high attrition rate:
     \item \textbf{System Stability:} Operational crashes (Python/API errors) were rare (N=8), indicating that the underlying infrastructure, retry mechanisms and exception handling were largely sufficient. 
 \end{itemize}
 
-\subsection{Recommender System Accuracy}
+\subsection{In-context (Recommender System) reliability} \label{subsec:recommender_accuracy}
 To evaluate the system's utility as a public service recommender, the validation outcomes were aggregated into a Confusion Matrix (Figure \ref{fig:recommender_matrix}). In this context, the classes are defined based on the goal of recommending eligible services:
 \begin{itemize} 
     \item \textbf{Positive Class (Recommendation):} The system validates the citizen as Eligible. 
@@ -170,8 +172,3 @@ The matrix reveals the system's risk profile:
     \item \textbf{True Negatives (75.6\%):} The system correctly rejected ineligible applicants in the majority of cases. 
     \item \textbf{False Negatives (3.7\%):} In 21 cases, the system incorrectly rejected an eligible applicant ("Missed Opportunity"). While this number is low, it represents a "Service Failure," denying access to entitled benefits. 
 \end{itemize}
-what is important in this context?
-
-\section{Semantic Stability (nice-to-have)}
-If we have time to do it, this chapter will use data from semantic similarity metrics drawn from past run artifacts on file.
-

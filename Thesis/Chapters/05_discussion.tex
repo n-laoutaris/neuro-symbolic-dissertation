@@ -1,22 +1,86 @@
 \chapter{Discussion}
 \label{ch:discussion}
-Here we will interpret the results and give subjective opinions and other observations.
+This chapter synthesizes the quantitative results presented in Chapter \ref{ch:results} to evaluate the broader implications of using Large Language Models for automated public service eligibility checks and recommendation. By analyzing the patterns of failure, ranging from syntactic hallucinations to logical paradoxes, this discussion aims to characterize the fundamental limitations of current neuro-symbolic architectures. The analysis moves beyond simple performance metrics to address the core challenges of semantic fidelity, algorithmic determinism and the operational sovereignty required for deployment in public administration.
 
-\section{The Logic Traps}
-Interpret the recurring logical failures in logically sound SPARQL generation, discussing the LLM's struggle with aggregations, joins, recurrency and closed loops.
+\section{Cognitive Dissonance in Code Generation}
+The most pervasive pattern observed throughout the experimental campaign was a fundamental disconnect between the Large Language Model's ability to generate valid \textit{syntax} and its ability to construct valid \textit{logic}. This phenomenon, termed here as "Cognitive Dissonance", underscores the architectural limitation of Transformer-based models when applied to formal reasoning tasks: they operate as approximate pattern matchers in a domain that requires exact symbolic execution.
 
-\section{The Syntactic Failures}
-Interpret the models' usage of wrong syntax, using other languages (perhaps more training data) despite being explicitly told to avoid it.
+\subsection{The Illusion of Fluency}
+The results from the "Student Housing" use case serve as the primary evidence for this dissonance. The Gemini 2.5 Pro model achieved an 80\% syntactic validity rate, successfully producing well-formed Turtle files with structurally correct SPARQL queries. To a human reviewer, this code appeared indistinguishable from expert-written logic. However, the functional accuracy of this "valid" code was only $\approx$25\%.\par
+This discrepancy reveals that the model has successfully memorized the \textit{grammar} of SHACL (e.g., correct brackets, prefixes, keywords) but failed to grasp the \textit{semantics} of the query it was constructing. The model "knows" how to write a query, but it does not "understand" well enough what the query actually calculates.
 
-\section{Domain Influence}
-Discuss the impact of complex vs simple domains or docuents, semantic web wise.
+\subsection{Structural Logic Failures} 
+The model's inability to properly understand graph topology led to recurring critical failures in the generated SPARQL constraints. Below we analyze some of the most prominent mistakes discovered upon human inspection of the runs flagged by the system as not perfect.
 
-\section{Prompt Engineering}
-Discuss the differences the tested prompting techniques made (or didn't make).
+\subsubsection{The Double-Counting Trap}
+In scenarios involving family units (for example, two parents with two children), the model consistently failed to apply set-theoretic distinctness. By generating queries that traversed from \texttt{:Parent} to \texttt{:Child} without the \texttt{COUNT(DISTINCT ?child)} modifier, the model inadvertently created a multiplicative join. Since both parents are linked to the same children, the query counted each child twice (once per parent path), artificially inflating the "Child Count" variable. This subsequently distorted calculations, leading to false validations where ineligible families were approved due to miscalculated thresholds.
 
-\section{Model Size Trade-offs}
-Discusses the counter-intuitive finding where the smaller model outperformed the larger model in literal constraint extraction and summarizarion (where else?)
+\subsubsection{The Cartesian Product Trap}
+Similarly, when aggregating income, the model frequently joined Income patterns and Child patterns in a single WHERE clause without sub-query separation. This caused the SPARQL engine to generate a Cartesian product of the two datasets, effectively multiplying every income record by every child record. This resulted in erroneous rejections where families were flagged with violations due to massive over-estimations of total family incomes.
 
+\subsubsection{Recursive Loops and Infinite Regression} 
+A more catastrophic failure mode was observed in the Flash model's handling of bidirectional relationships. The Student Housing ontology defines inverse relationships (e.g., a \texttt{:Parent} has a \texttt{:Child}, and that \texttt{:Child} has a \texttt{:Parent}). In several runs, the model generated SPARQL property paths that traversed these links cyclically (e.g., \texttt{:hasParent :hasChild :hasParent ...}) without a terminating condition. This created infinite recursion loops during execution, causing the PySHACL validation engine to crash entirely (logged as "Python Kernel Crash" in Section \ref{subsec:pipeline_attrition}). This demonstrates that the model treats graph traversal as a linguistic association task ("Parents are related to Children") rather than a directed graph walk, failing to anticipate the computational consequences of such cycles.
 
+\section{Syntax Hallucination and Language Bleed}
+While the Pro model's failures were primarily logical, the Flash model struggled to maintain the boundaries of the language itself. The experimental data reveals a phenomenon of "Language Bleed," where the model, optimized for high-throughput generalized text generation, conflated the syntax of semantically similar languages.
 
+\subsection{SQL Contamination}
+The most frequent syntax error was the appearance of illegitimate keywords, such as \texttt{FILTER NOT (...)}. This construct is valid in SQL (WHERE NOT) but invalid in SPARQL (which requires FILTER (! ...) or FILTER NOT EXISTS). This suggests that the model's training data contains significantly more SQL examples than SPARQL, leading it to default to the more dominant syntax when the probability distribution for the next token is ambiguous.
+
+\subsection{Token-Level Hallucinations}
+The model also exhibited errors that reveal its nature as a token predictor rather than a parser. The insertion of a dot (.) after \texttt{BIND} statements violates SPARQL grammar (where dots act as triple delimiters). This indicates the model might be trying to treat the code line as a natural language sentence that requires a period, ignoring the strict syntax tree of the query language. \par
+Furthermore, the model frequently attempted to use dot notation (e.g., \texttt{?s.hasChild}) or complex property path slashes (e.g., \texttt{?s /:hasChild}) in contexts where explicit triple patterns were required. While property paths exist in SPARQL 1.1, the specific context in which such syntax was generated often mimicked Object-Oriented programming accessors rather than valid RDF graph traversal.
+
+\subsection{Namespace Invention}
+A distinct class of errors involved the hallucination of ontology definitions. Despite being provided with a fixed set of prefixes, the model occasionally invented new namespaces (e.g., using the deprecated 2007 SHACL draft URI or inventing an \texttt{ex:Citizen} ontology). This behavior was the primary cause of all recorded "RDF Syntax Errors" (as distinct from SPARQL errors), confirming that smaller models struggle to adhere to strict "Negative Constraints" (i.e., "Do not use any other prefix").
+
+\section{The Trade-off of Abstraction vs. Fidelity}
+A widely held assumption in Large Language Model research is that "Model Capability" (size, reasoning power) correlates linearly with performance across all tasks. However, the experimental results from the "Parental Leave" use case reveal a critical inversion of this principle.
+
+\subsection{The "Smart Model" Trap}
+The extraction of eligibility preconditions requires extreme fidelity to the source text. Legal constraints often rely on specific enumerations that define the scope of the law. Such a case was presented when models came accross the following precondition in the Parental Leave use case: \textit{"The applicant must be employed under a dependent employment regine, in the Private or Public sector."} \par
+In this task, the Gemini 2.5 Flash model (theoretically less capable model) significantly outperformed the Gemini 2.5 Pro model. Flash, lacking the capacity for deep abstraction, tended to "copy-paste" the precondition literally. When presented with the employment requirement, it preserved the disjunction ("Private OR Public"). \par
+Pro, optimized for high-level reasoning and helpfulness, attempted to "summarize" the requirement. It interpreted "Private or Public" as a generic concept ("Employed"), effectively deleting the exclusion of other sectors (e.g., Freelancers). This finding suggests that for compliance tasks, "Smart" models may be fundamentally misaligned with the goal. Their training bias towards summarization and abstraction leads to Semantic Drift, where the gist of the rule is preserved but the legal boundary is lost.
+
+\subsection{The Deterministic Superiority}
+This trade-off extends to the architectural design of the pipeline itself. A stark contrast was observed between the error rates of the neural components and the symbolic components.\par
+Notably, zero syntax errors were recorded in the generation of the "Citizen-Service Graph" (Stage 3). This stage relied on deterministic Python code to serialize the graph based on the LLM-derived Information Model, rather than asking the LLM to generate the Turtle syntax directly. The perfect stability of this stage, contrasted with the high failure rate of the LLM-generated SHACL shapes (Stage 4), empirically validates the architectural decision to offload structural tasks to deterministic code wherever possible. \par
+This leads to a key design principle for Neuro-Symbolic systems in public administration: LLMs are necessary for interpretation (Extraction), but they are suboptimal for serialization (Code Generation). A robust pipeline must treat the LLM as a "Translator" of natural language, but never as an "Architect" of the final system structure.
+
+\section{The Complexity Ceiling}
+The divergence in performance between the "Student Housing" and "Parental Leave" use cases identifies a distinct Complexity Ceiling for current LLM-based logic generation. While the pipeline demonstrated high viability for administrative tasks involving categorical classification (Parental Leave), it experienced a near-total collapse when tasked with recursive arithmetic (Student Housing). \par
+This failure mode correlates strongly with the Dependency Depth of the required logic: 
+\begin{itemize} 
+    \item \textbf{Shallow Dependencies (Success):} Constraints that rely on single-node checks (e.g., \textit{Nationality} depends only on \textit{Applicant}) or flat Boolean logic (e.g., \textit{isValid} is True OR False) were handled with high accuracy (88.9\% logic success). 
+    \item \textbf{Deep Dependencies (Failure):} Constraints that require multi-hop traversal (e.g., \textit{Applicant} → \textit{Parent} → \textit{Residence}) or recursive variable modification (e.g., \textit{Income Limit} changes based on \textit{Dependent Child Count}) consistently triggered the "Cartesian Product" bug or infinite recursion errors. 
+\end{itemize}
+This suggests that while the tested LLMs can successfully act as "Semantic Parsers" for straightforward bureaucracy, they lack the internal "Working Memory" required to maintain the state of multi-variable equations throughout the code generation process.
+
+\section{The Contribution of Prompt Engineering}
+The experimental results challenge the prevailing narrative that "better prompting" is a universal solution to model limitations. Instead, the data reveals complex trade-offs where techniques that improve syntactic stability may inadvertently degrade logical reasoning.
+
+\subsection{The "Copy-Paste" Bias}
+The Default (Few-Shot) strategy proved essential for stabilizing syntax in the Pro model, boosting syntactic validity from 60\% to 80\% on the complex document. However, this stability came at a cost to logical accuracy. Zero-Shot strategy, despite producing broken code more often, achieved the highest logical accuracy (33.3\%) when it \textit{did} compile. \par
+This suggests a "Copy-Paste Bias": when provided with examples, the model seems to over-fit to the logic of the few-shot template, attempting to force the new problem into the old structure. Without examples (Zero-Shot), the model is forced to reason from first principles, leading to messier syntax but potentially more original (and correct) logical derivations.
+
+\subsection{The Failure of Self-Correction} 
+The Reflexion strategy failed to deliver the expected performance gains. For the less capable Flash model on the complex document, Reflexion actually \textit{degraded} performance, dropping syntax validity from 20\% to 5\%. This indicates that a model incapable of solving a problem in the first pass is equally incapable of critiquing its own solution. Asking a confused model to "double-check" its work merely introduces a second opportunity for hallucination, compounding errors rather than resolving them.
+
+\subsection{The Engineering Ceiling}
+These findings imply an "Engineering Ceiling": one cannot prompt their way out of a fundamental reasoning deficit. While Prompt Engineering can guide a capable model (Pro) to follow syntactic rules, it cannot bestow reasoning capabilities upon a smaller model (Flash) that physically lacks them. For high-stakes logic generation, architectural scale remains the dominant variable.
+
+\section{Feasibility and Sovereignty}
+The final dimensions of analysis concern the operational viability of deploying such a system within a public administration context. The experimental campaign revealed critical vulnerabilities in the reliance on proprietary Model-as-a-Service (MaaS) infrastructure.
+
+\subsection{The Semantic Drift of "Eligibility"}
+Feasibility is first challenged at the point of ingestion. The extraction and summarization phase (Stage 1) demonstrated a persistent ambiguity in defining "Eligibility." Despite explicit prompt instructions to ignore administrative steps, the model frequently conflated procedural requirements (e.g., "Log in to TaxisNet") with substantive facts (e.g., "Be employed"). This semantic drift creates a system that validates paperwork rather than reality. While acceptable for a pilot, a production system would require a stricter, legally-grounded ontology of "Evidence" vs. "Conditions" to prevent the digitization of bureaucracy from becoming merely the automation of red tape.
+
+\subsection{Replication Crisis}
+The most severe threat to feasibility, however, emerged from the infrastructure itself. During the experimental window, unannounced changes to the Google Gemini API rate limits and model availability caused a sudden, catastrophic degradation in pipeline throughput. This event serves as a potent case study for Digital Sovereignty.\par
+A public administration pipeline that relies on opaque, third-party endpoints is fundamentally fragile. The inability to guarantee consistent latency, availability, or even model behavior (version drift) renders MaaS solutions unsuitable for critical government infrastructure. The findings of this study strongly advocate for a shift towards Sovereign AI: deploying open-weights models (e.g., Llama 3, Mistral) on government-controlled infrastructure. Only by owning the compute can the administration guarantee the reproducibility and stability required for legal automation.
+
+\section{Risk Asymmetry in Public Administration}
+The evaluation of the system's "Recommender Accuracy" (Section \ref{subsec:recommender_accuracy}) reveals a critical insight into the deployment readiness of these neuro-symbolic agents. While standard machine learning models optimize for balanced F1 scores, the operational context of public administration imposes an asymmetric cost of error. \par
+The experimental data showed a 10.1\% False Positive Rate, which corresponds to instances where the system erroneously recommended a service to an ineligible citizen. In a commercial context (e.g., movie recommendations), such errors are trivial. However, in digital governance, a False Positive actively generates bureaucratic friction. Specifically, it compels a citizen to gather documents and submit an application that is destined to fail. This wastes public resources and also erodes trust in the automated system. Conversely, the 3.7\% False Negative Rate (Missed Opportunities), while statistically undesirable, represents a "safer" failure mode that maintains the status quo. \par 
+Consequently, the current pipeline's bias towards 'over-recommending' presents a significant barrier to unsupervised deployment in a real-world administrative setting.
 

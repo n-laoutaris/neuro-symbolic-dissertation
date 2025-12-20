@@ -1,4 +1,3 @@
-% file: thesis/ihu_thesis.sty
 \ProvidesPackage{ihu_thesis}
 
 % --- 1. PAGE LAYOUT ---
@@ -23,10 +22,6 @@
 \usepackage{titlesec}
 \setcounter{secnumdepth}{2} 
 
-% --- 5. TABLES ---
-\usepackage{booktabs}
-\usepackage{multirow}
-
 % H1: Chapter (Arial 28 Bold) - "1 Introduction" (No "Chapter" word)
 \titleformat{\chapter}[block] 
   {\normalfont\sffamily\fontsize{28}{34}\selectfont\bfseries} % Format
@@ -34,25 +29,21 @@
   {1em}                                                       % Space between Number and Title
   {}                                                          % Code before title
 \titlespacing*{\chapter}{0pt}{0pt}{40pt}
-
 % H2: Section (Arial 17 Bold)
 \titleformat{\section}
   {\normalfont\sffamily\fontsize{17}{22}\selectfont\bfseries}
   {\thesection}{1em}{}
 \titlespacing*{\section}{0pt}{18pt}{6pt} % Increased top space slightly for visual separation
-
 % H3: Subsection (Arial 13 Bold)
 \titleformat{\subsection}
   {\normalfont\sffamily\fontsize{13}{16}\selectfont\bfseries}
   {\thesubsection}{1em}{}
 \titlespacing*{\subsection}{0pt}{12pt}{6pt}
-
 % H4: Subsubsection (Arial 12 Bold) - Unnumbered
 \titleformat{\subsubsection}
   {\normalfont\sffamily\fontsize{12}{14}\selectfont\bfseries}
   {}{0pt}{} 
 \titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
-
 % H5: Paragraph (Times 12 Bold Italic) - Unnumbered
 \titleformat{\paragraph}
   {\normalfont\rmfamily\fontsize{12}{14}\selectfont\bfseries\itshape}
@@ -61,20 +52,37 @@
 
 % --- 5. CAPTIONS (Pictures & Tables) ---
 \usepackage[font={small,rm}, labelfont=bf, labelsep=colon]{caption} 
-
 % Set 12pt space (approx 1 blank line) between caption and content
 \captionsetup{skip=12pt}
-
 % Force positioning
 \captionsetup[table]{position=top}
 \captionsetup[figure]{position=bottom}
 
-% --- 6. ESSENTIAL PACKAGES ---
+% --- 6. TABLES ---
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% --- 7. PAGE NUMBERING ---
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % Clear all default headers/footers
+% Set Page Number to "Outer" corner (Left on Even, Right on Odd)
+\fancyfoot[LE,RO]{\thepage} 
+% Remove the horizontal rule/line in header 
+\renewcommand{\headrulewidth}{0pt}
+% Fix for "Plain" pages to match the style
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[LE,RO]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% --- 8. ESSENTIAL PACKAGES ---
 \usepackage{graphicx}      % Images
 \usepackage{float}         % Better image placement
 \usepackage{csquotes}      % Context sensitive quotes
 \usepackage{pdfpages}      % To inject the Word cover page
 \usepackage[hidelinks]{hyperref} % Clickable links (black)
 
-% --- 7. BIBLIOGRAPHY SETUP ---
+% --- 9. BIBLIOGRAPHY SETUP ---
 \usepackage[style=ieee, backend=biber]{biblatex}

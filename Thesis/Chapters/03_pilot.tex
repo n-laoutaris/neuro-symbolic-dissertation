@@ -1,7 +1,8 @@
 \chapter{Pilot Study}
+This chapter details the design, implementation and experimental validation of a novel Neuro-Symbolic pipeline for automating public service eligibility checks.
 
 \section{Overview}
-This chapter details the design, implementation and experimental validation of a novel Neuro-Symbolic pipeline for automating public service eligibility checks. The proposed architecture addresses the limitations of "black-box" Large Language Models (LLMs) by enforcing a strict separation between neural interpretation (extracting meaning from text) and symbolic execution (validating logic against data). \par
+The proposed architecture addresses the limitations of "black-box" Large Language Models (LLMs) by enforcing a strict separation between neural interpretation (extracting meaning from text) and symbolic execution (validating logic against data). \par
 The methodology is structured around a "Text-to-Graph-to-Logic" workflow. The system transforms unstructured administrative documents into formal Knowledge Graphs and executable SHACL shapes through a chain of intermediate structured representations. This design prioritizes explainability and determinism, ensuring that the final eligibility decision is derived from explicit, audit-able rules rather than probabilistic token generation. \par
 The chapter is organized as follows: Section \ref{subsec:semantic_modelling} defines the semantic schemas that ground the system. Section \ref{subsec:pipeline} details the four-stage extraction and generation pipeline. Section \ref{subsec:validation_engine} describes the validation engine, and Section \ref{sec:experimental_design} outlines the experimental framework used to stress-test the system's logical capabilities through automated mutation testing.
 
@@ -103,8 +104,10 @@ The output of the engine is a formal \textit{Validation Report Graph} adhering t
 
 \section{Experimental Design} \label{sec:experimental_design}
 To evaluate the reliability, functional correctness and operational stability of the proposed architecture, an experimental framework was developed. The design of this experiment moves beyond simple anecdotal testing, implementing a means to quantify the performance of the Neuro-Symbolic pipeline under varying conditions. \par
-The core unit of the experiment is defined as a "run". A run represents a single end-to-end execution of the pipeline governed by a specific Configuration Tuple: \\
-\centerline{\texttt{(Document, Model, Prompting Strategy)}} \par
+The core unit of the experiment is defined as a "run". A run represents a single end-to-end execution of the pipeline governed by a specific Configuration Tuple:
+\begin{quote}
+    \texttt{(Document, Model, Prompting Strategy)}
+\end{quote}
 Given that Large Language Models are inherently non-deterministic when operating at non-zero temperature settings, a single successful generation is insufficient to prove any result. To address this, the framework executes a loop of multiple iterations for each unique configuration. This repetition allows for "drowning out" stochasticity and for the results metrics to converge to values that describe the actual stability of the pipeline with more fidelity. \par
 The execution of these runs is done in The Orchestration Layer (see section \ref{subsec:system_architecture}), which oversees the following lifecycle for every iteration:
 \begin{enumerate} 
@@ -138,8 +141,10 @@ For every iteration ("run"):
 The resulting Mutated Citizen Graph and the Generated Shapes Graph (from Stage 4) are then passed to the afformentioned Validation Engine (section \ref{subsec:validation_engine}). The boolean outcome (\texttt{conforms}) and the number of violations are captured and logged to later be compared against the Expected Violation Count defined in the scenario.
 
 \subsection{Experimental Configurations}
-Recall the configuration tuple around which the experiment was designed: \\
-\centerline{\texttt{(Document, Model, Prompting Strategy)}}
+Recall the configuration tuple around which the experiment was designed:
+\begin{quote}
+    \texttt{(Document, Model, Prompting Strategy)}
+\end{quote}
 For the experimental part of this work we chose 2 documents, 2 models and 3 prompting strategies, for a total of 12 different experimental configurations. This combinatorial approach allows for the isolation of specific failure modes, distinguishing between errors caused by document complexity, model reasoning capacity, or prompting sufficiency. Below we analyze each component of the tuple and the configurations explored in the scope of this work.
 
 \subsubsection{Document Corpora (Use Cases)} 
@@ -188,7 +193,8 @@ This configuration evaluates the efficacy of self-correction mechanisms in code 
 \subsection{Evaluation Metrics}
 To move beyond qualitative observation, the experimental framework was designed in such a way to capture a granular dataset for every execution cycle. This data collection strategy was designed to decouple structural failures (code that does not compile) from logical failures (code that compiles but yields incorrect decisions), enabling a multi-dimensional analysis of pipeline performance.
 
-\subsubsection{Data Collection} For every experimental run, the system persists a dataset that captures the complete state of the pipeline at the moment of execution, categorized into four distinct dimensions:
+\subsubsection{Data Collection} 
+For every experimental run, the system persists a dataset that captures the complete state of the pipeline at the moment of execution, categorized into five distinct dimensions:
 \begin{itemize} 
     \item \textbf{Configuration Metadata:} Contextual fields regarding a unique Run ID, timestamp, the specific document input, the LLM employed and the active prompting strategy. 
     \item \textbf{Artifact Fingerprinting:} To track the stability and uniqueness of the LLM's output, the system computes and logs the cryptographic hashes (MD5) of the generated graphs. This allows for the detection of potentially identical artifacts generated across different runs.
@@ -197,11 +203,12 @@ To move beyond qualitative observation, the experimental framework was designed 
     \item \textbf{Operational Diagnostics:} To monitor system health, metrics such as end-to-end Execution Time (latency) and specific Error Messages (e.g., Python exceptions) are logged. These fields are critical for quantifying the operational stability of the external API dependencies.
 \end{itemize}
 
-\subsubsection{Performance Indicators} The analysis of this dataset focuses on two primary dimensions of success.
+\subsubsection{Performance Indicators} 
+The analysis of this dataset focuses on two primary dimensions of success.
 
 \paragraph{Syntactic Validity} The first hurdle for any code-generating system is the production of executable syntax. This metric quantifies the percentage of runs where the LLM produced a \texttt{.ttl} file that could be successfully parsed by the RDFLib graph library and whose embedded SPARQL queries could be compiled without error. A run that fails this check is distinguished from runs that simply produce incorrect logic.
 
-\paragraph{Functional Logic Accuracy} For runs that pass the syntax check, the focus shifts to logical fidelity. This is measured by comparing the system's eligibility decision against the known ground truth of the mutation scenarios. By treating the validation outcome as a binary classification task—where a "Violation" is the Positive class and "Conformance" is the Negative class—standard machine learning metrics such as Precision, Recall, and F1 Score are calculated. Precision measures the system's trustworthiness (avoiding false alarms), while Recall measures its safety (successfully catching ineligible applicants).
+\paragraph{Functional Logic Accuracy} For runs that pass the syntax check, the focus shifts to logical fidelity. This is measured by comparing the system's eligibility decision against the known ground truth of the mutation scenarios. By treating the validation outcome as a binary classification task, where a "Conformance" is the Positive class and "Violation" is the Negative class, standard machine learning metrics can be calculated.
 
 \section{Conclusion} 
 This chapter has detailed the architectural and experimental foundations of the Neuro-Symbolic pipeline. By combining a schema-grounded generation process with a deterministic mutation testing framework, the system is designed to provide a quantifiable evaluation of LLM capabilities in the context of this task. The following chapter presents the results of these experiments, analyzing the pipeline's performance across the afformentioned dimensions.
