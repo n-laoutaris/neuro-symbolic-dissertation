@@ -18,9 +18,9 @@ To achieve our objective, we defined three specific Research Questions (RQs) tha
 \textbf{RQ1} explores the initial phase of the proposed pipeline (Text-to-Graph), while \textbf{RQ2} focuses on the core challenge of logic generation. \textbf{RQ3} allows us to critically analyze how existing studies ensure trust and correctness.
 
 \subsection{Search Strategy}
-To identify relevant records, we conducted an automated search on the \textbf{Scopus} database. 
+To identify relevant records, we conducted an automated search on the \textit{Scopus} database. 
 Scopus was selected as the source due to its extensive coverage of academic literature.
-The search was executed on the 1st of \textbf{December 2025}.
+The search was executed on the 1st of December 2025.
 A search query was constructed to find the intersection of Generative AI and Semantic Web technologies. We employed Boolean logic to combine three conceptual blocks:
 \begin{enumerate}
     \item \textbf{Generative AI Terms:} ("Large Language Model" OR "LLM")
@@ -35,10 +35,10 @@ These blocks were combined using the \texttt{AND} operator. The final search str
 \end{quote}
 We applied some metadata filters during this phase:
 \begin{itemize}
-    \item \textbf{Language:} Only papers written in \textbf{English} were considered.
+    \item \textbf{Language:} Only papers written in English were considered.
     \item \textbf{Document Type:} We focused on Articles and Conference Papers, excluding trade journals and errata.
 \end{itemize}
-Interestingly, despite the Date Range not being restricted, all results fell in the range of \textbf{2023--2026}. This could be explained by the fact that the application of Large Language Models to formal constraint languages (like SHACL) is a nascent field that emerged primarily after the widespread adoption of GPT-4 class models.
+Interestingly, despite the Date Range not being restricted, all results fell in the range of years 2023--2026. This could be explained by the fact that the application of Large Language Models to formal constraint languages (like SHACL) is a nascent field that emerged primarily after the widespread adoption of GPT-4 class models.
 
 The described search strategy yielded an initial set of candidates which were then subjected to the screening process described in the following section.
 
@@ -87,65 +87,76 @@ In this "Quality Screening" phase, we applied a second set of quality exclusion 
 The next section summarizes the results following this quality assessment.
 
 \section{Results}
-From an initial set of 125 records, 14 studies were identified as meeting all eligibility criteria.
+From an initial set of 125 records, 25 studies were identified as meeting all eligibility criteria.
 
 \subsection{PRISMA Flow Diagram}
 The search and screening process can be summarized in the PRISMA flow diagram (Figure \ref{fig:prisma}). 
 \begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.9\textwidth]{images/prisma_flow_diagram.png}
+    \includegraphics[width=0.9\textwidth]{images/prisma_flow_diagram.pdf}
     \caption{PRISMA Flow Diagram of the selection process}
     \label{fig:prisma}
 \end{figure}
 
 \subsection{Data Extraction}
-Table \ref{tab:extraction_matrix} presents the data extraction summary for the 14 included studies. The studies are categorized by their primary theme: (1) Domain-Specific Pipelines, (2) Automated Logic Generation, (3) Validation Frameworks, and (4) Retrieval (GraphRAG).
+Table \ref{tab:extraction_matrix} presents the data extraction summary for the 25 included studies. The studies are categorized 
 
-\begin{table}[htbp]
-    \centering
-    \caption{Summary of Included Studies (Data Extraction)}
-    \label{tab:extraction_matrix}
-    \renewcommand{\arraystretch}{1.2} % Better row spacing
-    \resizebox{\textwidth}{!}{% Auto-fit to page width
-    \begin{tabular}{|l|p{3cm}|p{2.5cm}|p{2.5cm}|p{4cm}|}
+\begin{center}
+    \small
+    \begin{longtable}{|p{2.6cm}|p{2.8cm}|p{1.4cm}|p{3.5cm}|p{3.3cm}|}
+        \caption{Final Synthesis Matrix of Included Studies ($n=25$)} \label{tab:extraction_matrix} \\
         \hline
-        \textbf{Study} & \textbf{Domain / Input} & \textbf{Task} & \textbf{Target Logic} & \textbf{Validation Method} \\ \hline
-        
-        \multicolumn{5}{|c|}{\textit{Category 1: Domain-Specific Neuro-Symbolic Pipelines}} \\ \hline
-        Konstantinidis (2025) \cite{Konstantinidis2025} & Public Service Regulations & Framework Proposal & RDF + SHACL & Conceptual Prototype (No regression testing) \\ \hline
-        Hanuragav (2025)  & Clinical Study Reports & Compliance Check & SHACL + SPARQL & Deterministic Rule Execution \\ \hline
-        Oranekwu (2026)  & IoT Security (NIST) & Compliance Check & Ontology + SWRL & Ontology-driven Reasoning \\ \hline
-        Spyropoulos (2025)  & Police Reports & Text-to-Graph & RDF Triples & Human-in-the-loop Verification \\ \hline
-
-        \multicolumn{5}{|c|}{\textit{Category 2: Automated Logic Generation (Text-to-Logic)}} \\ \hline
-        Walter (2026)  & General (Wikidata) & Text-to-SPARQL & SPARQL & Execution Accuracy (Zero-shot) \\ \hline
-        Soularidis (2024)  & NL Rules & Text-to-SWRL & SWRL & LLM-assisted Generation \\ \hline
-        Jiang (2025)  & Scholarly QA & Text-to-SPARQL & SPARQL & Ontology-Guided Prompting \\ \hline
-        Mashhaditafreshi (2025)  & JSON Data & Modeling & SHACL Shapes & Human Evaluation of Models \\ \hline
-        Avila (2025)  & General QA & Text-to-SPARQL & SPARQL & Benchmark Execution (Auto-KGQA) \\ \hline
-
-        \multicolumn{5}{|c|}{\textit{Category 3: Validation \& Hallucination Control}} \\ \hline
-        Perevalov (2025)  & Multilingual QA & Query Filtering & SPARQL & LLM-based Probabilistic Filtering \\ \hline
-        Gashkov (2025)  & QA Systems & Query Judging & SPARQL & LLM-as-a-Judge \\ \hline
-        Tufek (2025)  & Industrial Standards & Requirement Translation & SPARQL & F1 Score on Logic Translation \\ \hline
-        
-        \multicolumn{5}{|c|}{\textit{Category 4: Retrieval Frameworks (GraphRAG)}} \\ \hline
-        Ongris (2025) & General (Wikidata) & GraphRAG & SPARQL & Jaccard Similarity \\ \hline
-        Ahmed Khan (2026)  & Data Center Telemetry & Text-to-Query & SPARQL & Execution Accuracy vs NoSQL \\ \hline
-    \end{tabular}
-    }
-\end{table}
+        \textbf{Study} & \textbf{Core Task / Domain} & \textbf{Logic} & \textbf{Neuro-Symbolic Integration} & \textbf{Validation Method} \\ \hline
+        \endhead
+    
+        \multicolumn{5}{|c|}{\textit{Category 1: Public Administration \& Normative Compliance}} \\ \hline
+        Konstantinidis (2025) & Service Rec. (Public Admin) & SHACL & LLM extraction from PDF Laws & Human Expert Assessment \\ \hline
+        Oranekwu (2026) & Cyber Compliance (IoT) & SPARQL & Ontology-driven RAG pipeline & Deterministic Reasoning \\ \hline
+        Spyropoulos (2025) & Entity Mining (Police) & RDF/OWL & LLM-driven Narrative Extraction & Visual/SPARQL Verification \\ \hline
+        Hanuragav (2025) & CSR Validation (Medical) & SHACL & Deterministic ETL + YAML drafting & Deterministic Execution \\ \hline
+    
+        \multicolumn{5}{|c|}{\textit{Category 2: Automated Logic Synthesis \& Semantic Parsing}} \\ \hline
+        Agarwal (2024) & Complex QA (General) & KoPL & SymKGQA: Symbolic Program Gen. & Hits@1 and F1 Scores \\ \hline
+        Avila (2025) & Scientific QA (SciQA) & SPARQL & Hybrid RAG + Few-shot ICL & F1-score on Benchmarks \\ \hline
+        Jiang (2025) & Multi-KG QA (General) & SPARQL & Two-stage Sketch-based parsing & Hits@1 and F1 Scores \\ \hline
+        Shah (2024) & Multi-hop QA (General) & SPARQL & Planned Query Guidance & Execution Match Accuracy \\ \hline
+        Walter (2026) & Generic Reasoning (Multi) & SPARQL & Zero-shot Iterative Agent & Probabilistic (Benchmark F1) \\ \hline
+        Soularidis (2024) & Rule Gen. (Search/Rescue) & SWRL & Template-driven GPT-4o Prompting & Human vs. Expert (F1) \\ \hline
+        Lehmann (2023) & Semantic Parsing (Wiki) & CNL & Controlled Natural Lang. parsing & BLEU / ROUGE / Hits@1 \\ \hline
+        Kovriguina (2023) & SPARQL Gen. (Fantasy) & SPARQL & SPARQLGEN: Subgraph Augment. & F1-macro on Benchmarks \\ \hline
+        Mountantonakis (2025) & Cultural Heritage (Art) & SPARQL & Two-stage Path Pattern prediction & Benchmark Accuracy \\ \hline
+        Ongris (2024) & Wikidata QA (General) & SPARQL & Sequential LLM Chaining (GraphRAG) & Jaccard Similarity \\ \hline
+        Vieira da Silva (2024) & Capability Model. (Manuf.) & OWL & TBox-contextualized prompting & OWL Reasoning/SHACL \\ \hline
+        Emonet (2025) & Federated QA (Bio) & SPARQL & ShEx/VoID-driven RAG retrieval & Execution Success Rate \\ \hline
+        Mashhaditafreshi (2025) & Digital Twins (IoT) & SHACL & SAMM Copilot: Iterative bootstrapping & Automated Jena Checks \\ \hline
+    
+        \multicolumn{5}{|c|}{\textit{Category 3: Evaluation, Stability \& Trustworthiness}} \\ \hline
+        Sequeda (2025) & Enterprise Trust (SQL) & SPARQL & Position Paper on KG-based trust & Execution Benchmarks \\ \hline
+        Allemang (2024) & Query Correction (SQL) & SPARQL & Ontology-based Check + Repair & Iterative LLM Repair \\ \hline
+        Gashkov (2025) & Query Filtering (General) & SPARQL & Instruction-Tuned LLM-as-a-Judge & Answer Trustworthiness \\ \hline
+        Adam (2025) & Statement Verif. (Bio) & RDF & RAG using External Snippets & Precision / Recall \\ \hline
+        Meyer (2025) & KGE Benchmarking (Web) & SPARQL & LLM-KG-Bench 3.0 Framework & Automated Syntax/F1 \\ \hline
+        Kosten (2024) & Prompt Eng. (General) & SPARQL & Multi-framework Evaluation & Execution Accuracy \\ \hline
+        Schmidt (2026) & Systematicity (Wiki) & SPARQL & CompoST: Compositional Testing & Compositionality F1 \\ \hline
+        Tufek (2025) & Artifact Valid. (Industry) & SPARQL & Zero-shot Instruction Prompting & Domain-specific F1 Score \\ \hline
+    
+        \hline
+    \end{longtable}
+    \end{center}
 
 \section{Thematic Analysis}
-\subsection{From Text to Structured Models}
-Current research demonstrates that LLMs are highly effective at the initial 'extraction' phase, successfully mapping unstructured text into RDF or SHACL skeletons.
-\subsection{Automated Logic Generation}
-Several studies focus on translating natural language directly into query languages. Walter et al. achieved state-of-the-art results in zero-shot SPARQL generation, while Soularidis et al. explored generating SWRL rules. However, these approaches often struggle with complex, nested logic without guidance.
-\subsection{Validation and Hallucination Control}
-A critical challenge is ensuring the generated logic is correct. Perevalov et al. propose using an LLM to 'judge' or filter the SPARQL queries. In contrast, Tufek et al. use F1 scores against a gold standard. Crucially, most existing validation methods are probabilistic (LLM-based) rather than deterministic.
+
+\subsection{Neuro-Symbolic Pipelines in Public Administration}
+In the domain of public administration and compliance, research is focused on translating high-stakes text (laws, regulations) into logic. However, these systems are still largely conceptual prototypes.
+
+\subsection{State-of-the-art in Logic Synthesis}
+The broader field of automated logic synthesis is dominated by descriptive question-answering tasks. While methods like 'Planned Query Guidance' improve accuracy, they are rarely tested against prescriptive legal constraints.
+
+\subsection{Methodologies for Logic Validation and Trust}
+Evaluation frameworks are shifting toward 'Knowledge Graphs as a Source of Trust'. Yet, current validation relies on probabilistic 'LLM-judges' or single benchmarks, leaving a gap for the deterministic testing required in rigorous governance environments.
 
 \section{Discussion and Research Gap}
-While the literature shows success in extraction (2.4.1) and generation (2.4.2), there is a gap in deterministic validation. Papers like Konstantinidis propose the theoretical framework for public services, and Hanuragav applies similar logic to clinical reports. However, no study has yet implemented a comprehensive Mutation Testing framework to rigorously test the structural stability of LLM-generated SHACL shapes for public service eligibility. This dissertation aims to fill that gap.
+While the literature shows success in extraction and generation, there is a gap in deterministic validation. no study has yet implemented a comprehensive Mutation Testing framework to rigorously test the structural stability of LLM-generated SHACL shapes for public service eligibility.
 
 Other idea: most literature is about KGQA and information retrieval. Nobody (almost?) tries to make the sparql queries represent RULES and not just questions. 
 

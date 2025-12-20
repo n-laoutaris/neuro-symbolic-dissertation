@@ -44,7 +44,7 @@ While the Public Service Meta-Model describes the \textit{rules}, the Citizen Sc
 It has been demonstrated that the generation of such schemas can be automated as part of the pipeline \cite{Konstantinidis2025}. However, for the scope of this pilot study, the Citizen Schema is treated as fixed input context. This methodological choice serves two purposes: 
 \begin{enumerate} 
     \item \textbf{Experimental Control:} By fixing the target schema, we isolate the performance of the LLM in \textit{logic generation} (SHACL/SPARQL) and \textit{extraction}, without the confounding variable of schema generation errors.
-    \item \textbf{Prerequisite for Testing:} The automated testing framework relies on injecting specific faults into the citizen graph (e.g., modifying property values to trigger violations). This requires a deterministic, known-in-advance schema structure; had the schema been generated dynamically during each run, it would be impossible to define a static library of test scenarios targeting specific graph nodes. 
+    \item \textbf{Prerequisite for Testing:} The automated testing framework relies on injecting specific faults into the citizen graph (e.g., modifying property values to trigger violations). This requires a deterministic, known-in-advance schema structure. Had the schema been generated dynamically during each run, it would be impossible to define a static library of test scenarios targeting specific graph nodes. 
 \end{enumerate}
 
 \subsection{The Extraction and Generation Pipeline} \label{subsec:pipeline}
