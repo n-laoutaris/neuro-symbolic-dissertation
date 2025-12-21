@@ -101,63 +101,125 @@ The search and screening process can be summarized in the PRISMA flow diagram (F
 \subsection{Data Extraction}
 Table \ref{tab:extraction_matrix} presents the data extraction summary for the 25 included studies. The studies are categorized 
 
-\begin{center}
-    \small
-    \begin{longtable}{|p{2.6cm}|p{2.8cm}|p{1.4cm}|p{3.5cm}|p{3.3cm}|}
-        \caption{Final Synthesis Matrix of Included Studies ($n=25$)} \label{tab:extraction_matrix} \\
-        \hline
-        \textbf{Study} & \textbf{Core Task / Domain} & \textbf{Logic} & \textbf{Neuro-Symbolic Integration} & \textbf{Validation Method} \\ \hline
-        \endhead
-    
-        \multicolumn{5}{|c|}{\textit{Category 1: Public Administration \& Normative Compliance}} \\ \hline
-        Konstantinidis (2025) & Service Rec. (Public Admin) & SHACL & LLM extraction from PDF Laws & Human Expert Assessment \\ \hline
-        Oranekwu (2026) & Cyber Compliance (IoT) & SPARQL & Ontology-driven RAG pipeline & Deterministic Reasoning \\ \hline
-        Spyropoulos (2025) & Entity Mining (Police) & RDF/OWL & LLM-driven Narrative Extraction & Visual/SPARQL Verification \\ \hline
-        Hanuragav (2025) & CSR Validation (Medical) & SHACL & Deterministic ETL + YAML drafting & Deterministic Execution \\ \hline
-    
-        \multicolumn{5}{|c|}{\textit{Category 2: Automated Logic Synthesis \& Semantic Parsing}} \\ \hline
-        Agarwal (2024) & Complex QA (General) & KoPL & SymKGQA: Symbolic Program Gen. & Hits@1 and F1 Scores \\ \hline
-        Avila (2025) & Scientific QA (SciQA) & SPARQL & Hybrid RAG + Few-shot ICL & F1-score on Benchmarks \\ \hline
-        Jiang (2025) & Multi-KG QA (General) & SPARQL & Two-stage Sketch-based parsing & Hits@1 and F1 Scores \\ \hline
-        Shah (2024) & Multi-hop QA (General) & SPARQL & Planned Query Guidance & Execution Match Accuracy \\ \hline
-        Walter (2026) & Generic Reasoning (Multi) & SPARQL & Zero-shot Iterative Agent & Probabilistic (Benchmark F1) \\ \hline
-        Soularidis (2024) & Rule Gen. (Search/Rescue) & SWRL & Template-driven GPT-4o Prompting & Human vs. Expert (F1) \\ \hline
-        Lehmann (2023) & Semantic Parsing (Wiki) & CNL & Controlled Natural Lang. parsing & BLEU / ROUGE / Hits@1 \\ \hline
-        Kovriguina (2023) & SPARQL Gen. (Fantasy) & SPARQL & SPARQLGEN: Subgraph Augment. & F1-macro on Benchmarks \\ \hline
-        Mountantonakis (2025) & Cultural Heritage (Art) & SPARQL & Two-stage Path Pattern prediction & Benchmark Accuracy \\ \hline
-        Ongris (2024) & Wikidata QA (General) & SPARQL & Sequential LLM Chaining (GraphRAG) & Jaccard Similarity \\ \hline
-        Vieira da Silva (2024) & Capability Model. (Manuf.) & OWL & TBox-contextualized prompting & OWL Reasoning/SHACL \\ \hline
-        Emonet (2025) & Federated QA (Bio) & SPARQL & ShEx/VoID-driven RAG retrieval & Execution Success Rate \\ \hline
-        Mashhaditafreshi (2025) & Digital Twins (IoT) & SHACL & SAMM Copilot: Iterative bootstrapping & Automated Jena Checks \\ \hline
-    
-        \multicolumn{5}{|c|}{\textit{Category 3: Evaluation, Stability \& Trustworthiness}} \\ \hline
-        Sequeda (2025) & Enterprise Trust (SQL) & SPARQL & Position Paper on KG-based trust & Execution Benchmarks \\ \hline
-        Allemang (2024) & Query Correction (SQL) & SPARQL & Ontology-based Check + Repair & Iterative LLM Repair \\ \hline
-        Gashkov (2025) & Query Filtering (General) & SPARQL & Instruction-Tuned LLM-as-a-Judge & Answer Trustworthiness \\ \hline
-        Adam (2025) & Statement Verif. (Bio) & RDF & RAG using External Snippets & Precision / Recall \\ \hline
-        Meyer (2025) & KGE Benchmarking (Web) & SPARQL & LLM-KG-Bench 3.0 Framework & Automated Syntax/F1 \\ \hline
-        Kosten (2024) & Prompt Eng. (General) & SPARQL & Multi-framework Evaluation & Execution Accuracy \\ \hline
-        Schmidt (2026) & Systematicity (Wiki) & SPARQL & CompoST: Compositional Testing & Compositionality F1 \\ \hline
-        Tufek (2025) & Artifact Valid. (Industry) & SPARQL & Zero-shot Instruction Prompting & Domain-specific F1 Score \\ \hline
-    
-        \hline
-    \end{longtable}
-    \end{center}
+{ \small
+\begin{longtable}[c]{|p{2.6cm}|p{2.8cm}|p{1.4cm}|p{3.5cm}|p{3.3cm}|}
+    \caption{Final Synthesis Matrix of Included Studies ($n=25$)} \label{tab:extraction_matrix} \\
+    \hline
+    \textbf{Study} & \textbf{Core Task / Domain} & \textbf{Logic} & \textbf{Neuro-Symbolic Integration} & \textbf{Validation Method} \\ \hline
+    \endfirsthead
+
+    \multicolumn{5}{c}{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\ \hline
+    \textbf{Study} & \textbf{Core Task / Domain} & \textbf{Logic} & \textbf{Neuro-Symbolic Integration} & \textbf{Validation Method} \\ \hline
+    \endhead % This is where headers for page 2+ stop
+
+    \hline
+    \multicolumn{5}{|r|}{{Continued on next page...}} \\ \hline
+    \endfoot % This is the footer for split pages
+
+    \hline
+    \endlastfoot % This is the final footer (usually just a line)
+
+    \multicolumn{5}{|c|}{\textit{Category 1: Public Administration \& Normative Compliance}} \\ \hline
+    Konstantinidis (2025) \cite{Konstantinidis2025} & Recommendation (Public Services) & RDF, SHACL & LLM extraction, SHACL validation & Human Expert Assessment \\ \hline
+    Oranekwu (2026) \cite{Oranekwu2026} & Cybersecurity Compliance (IoT) & OWL, SPARQL & Ontology-driven RAG & Similarity over ground truth \\ \hline
+    Spyropoulos (2025) \cite{Spyropoulos2025} & Entity Mining (Police Reports) & RDF, OWL & LLM Entity Extraction \& linking & Visual and SPARQL Verification \\ \hline
+    Hanuragav (2025) \cite{Hanuragav2025} & CSR Validation (Medical) & SHACL, SPARQL &  RTF to JSON to RDF with YAML mapper & SHACL (structure), SPARQL (content) \\ \hline
+
+    \multicolumn{5}{|c|}{\textit{Category 2: Automated Logic Synthesis \& Semantic Parsing}} \\ \hline
+    Agarwal (2024) \cite{Agarwal202410119} & Complex QA (KGQA) & KoPL & SymKGQA: Symbolic Program Generation & Hits@1 and F1 on Benchmarks \\ \hline
+    Avila (2025) \cite{Avila202576} & Scientific QA (KGQA) & SPARQL & Text-to-SPARQL with RAG + Few-shot ICL & F1 on Benchmarks \\ \hline
+    Jiang (2025) \cite{Jiang202528} & Multi-KG Generalization (KGQA) & SPARQL & Semantic sketch + KG population & Hits@1 and F1 on Benchmarks \\ \hline
+    Shah (2024) \cite{Shah2024125} & Multi-hop QA (KGQA) & Cypher, SPARQL & Text-to-Logic with Few-shot + CoT & Match Accuracy on Benchmarks\\ \hline
+    Walter (2026) \cite{Walter2026271} & Reasoning / QA (Multi-domain) & SPARQL & Zero-shot Iterative Agent KG exploration & F1 on Benchmarks \\ \hline
+    Soularidis (2024) \cite{Soularidis20247} & Rule Generation (Search \& Rescue) & SWRL & Ontology-driven Text-to-SWRL & F1 on Human Expert \\ \hline
+    Lehmann (2023) \cite{Lehmann20231348} & Semantic Parsing (Wikidata) & CNL, SPARQL & Controlled Natural Language to Logic & Hits@1 on Benchmarks \\ \hline
+    Kovriguina (2023) \cite{Kovriguina2023} & SPARQL Generation (Fantasy) & SPARQL & Augmenting prompts with RDF subgraphs & F1-macro on Benchmarks \\ \hline
+    Mountantonakis \cite{Mountantonakis2025} (2025) & Cultural Heritage (Art) & SPARQL & Path Pattern prediction + query generation & Accuracy on Benchmark \\ \hline
+    Ongris (2024) \cite{Ongris202444} & Wikidata QA (KGQA) & SPARQL & Sequential LLM Chaining + GraphRAG & Jaccard Similarity on Ground Truth \\ \hline
+    Vieira da Silva (2024) \cite{VieiradaSilva2024} & Capability Modeling (IoT) & OWL & TBox-contextualized prompting & Pellet (OWL reasoning) + SHACL \\ \hline
+    Emonet (2025) \cite{Emonet2025} & Federated QA (Bioinformatics) & SPARQL & ShEx/VoID-driven RAG query generation & Execution Success Rate and F1 \\ \hline
+    Mashhaditafreshi (2025) \cite{Mashhaditafreshi202536} & Digital Twins (IoT) & RDF, SHACL & JSON to Aspect Models via bootstrapping & Human evaluation, Jena (RDF syntax) \\ \hline
+
+    \multicolumn{5}{|c|}{\textit{Category 3: Evaluation, Stability \& Trustworthiness}} \\ \hline
+    Sequeda (2025) \cite{Sequeda2025} & SQL Databases (Enterprise) & SPARQL & LLM query correction & Comparison with SQL ground truth \\ \hline
+    Allemang (2024) \cite{Allemang2025324} & SQL Databases (Enterprise) & SPARQL & Ontology-based Error Detection + Repair & Execution Accuracy on Benchmark \\ \hline
+    Gashkov (2025) \cite{Gashkov2025177} & Query Filtering (Multilingual) & SPARQL & LLM-as-a-Judge binary classifier & Answer Trustworthiness on Benchmark \\ \hline
+    Adam (2025) \cite{Adam2025} & Statement Verification (Bio-sci) & RDF & RAG using External Snippets & Precision / Recall on fixed dataset \\ \hline
+    Meyer (2025) \cite{Meyer2025280} & KGE Benchmarking (Web) & RDF, SPARQL & LLM-KG-Bench 3.0 Framework & Parseable Syntax and F1 \\ \hline
+    Kosten (2024) \cite{Kosten2024} & Complex QA (KGQA) & SPARQL & Ontology-based prompt engineering & Execution Accuracy on Benchmark\\ \hline
+    Schmidt (2026) \cite{Schmidt20263} & Systematicity Testing (Wiki) & SPARQL & CompoST: Compositional Testing & Compositionality F1 on ground truth \\ \hline
+    Tufek (2025) \cite{Tufek202592} & Artifact Validation (Industrial) & SPARQL & Zero-shot Instruction Prompting & Domain-specific Precision, Recall, F1 \\ \hline
+
+    \hline
+\end{longtable}
+}
+
 
 \section{Thematic Analysis}
 
 \subsection{Neuro-Symbolic Pipelines in Public Administration}
-In the domain of public administration and compliance, research is focused on translating high-stakes text (laws, regulations) into logic. However, these systems are still largely conceptual prototypes.
+The integration of Large Language Models (LLMs) and Knowledge Graphs (KGs), frequently characterized as neuro-symbolic AI, seeks to combine the interpretive flexibility of neural networks with the logical rigor of formal ontologies to address the complexities of public sector data management \cite{Konstantinidis2025}. In this domain, authors are increasingly moving from unstructured legislative texts, narrative reports and regulations, toward formal logic to enable proactive and data-centric governance \cite{Konstantinidis2025}\cite{Spyropoulos2025}.
+
+\subsubsection{Knowledge Extraction and Formalization}
+The transition from unstructured text to formal logic typically follows a multi-stage pipeline designed to reduce LLM hallucinations while preserving the semantic nuances of legal rules \cite{Konstantinidis2025}\cite{Oranekwu2026}. \par
+Konstantinidis et al. \cite{Konstantinidis2025} utilize LLMs to interpret complex legislative documents (PDFs), extracting preconditions for public services and translating them into SHACL (Shapes Constraint Language) rules. Their approach uses Retrieval-Augmented Generation (RAG) and prompt chaining to transform raw text into RDF-based evidence models, ensuring that the extracted rules are grounded in established standards like \textit{CPSV-AP} and \textit{CCCEV}. \par
+Similarly, Oranekwu et al. \cite{Oranekwu2026} employ a RAG pipeline to ingest regulatory texts and manufacturer privacy policies, using LLMs to extract subject-predicate-object triples that are then mapped to a compliance knowledge graph. \par
+Spyropoulos and Tsiantos \cite{Spyropoulos2025} focus on law-enforcement archives, applying instruction-tuned models like OpenAI o3 to narrative police reports to extract entities and their interrelationships, subsequently converting this knowledge into OWL-compliant triples for ingestion into a triplestore.
+
+\subsubsection{The Role of Intermediate Models}
+Intermediate representations serve as critical "blueprints" or "mappers" that bridge the gap between unstructured narratives and executable logic \cite{Hanuragav2025}\cite{Spyropoulos2025}. \par
+Hanuragav and Gopinath \cite{Hanuragav2025} demonstrate the utility of intermediate representations through a multi-stage pipeline designed for regulatory validation. In their framework, the transition from unstructured rich-text documents to formal RDF is mediated by a JSON-to-YAML mapping process. By utilizing LLMs to draft YAML mapper files rather than direct triples, the architecture decouples the semantic extraction of data from the technical generation of the knowledge graph. This reliance on non-executable intermediate schemas suggests a shift toward modularity in public sector pipelines, where the LLM's role is confined to architectural drafting, ensuring that the resulting logic is structurally grounded before final conversion. \par 
+Konstantinidis et al. \cite{Konstantinidis2025} also utilize intermediate steps to formulate natural language rules into a template format before final SHACL generation, allowing for the hierarchical structuring of evidence data. \par 
+Spyropoulos and Tsiantos \cite{Spyropoulos2025} employ interim tabular forms to organize recognized entities before they are formally mapped to an OWL ontology, facilitating easier human-in-the-loop validation.
+
+\subsubsection{Current Status and Limitations}
+Despite the promising results, these systems are currently characterized as conceptual or pilot-scale prototypes \cite{Konstantinidis2025}\cite{Oranekwu2026}. \par
+Konstantinidis et al. \cite{Konstantinidis2025} emphasize that their pipeline is not yet end-to-end operational and faces significant hurdles regarding data fragmentation across administrative silos. \par
+A primary critique of current methods is the lack of rigorous automated testing at scale. For instance, Oranekwu et al. \cite{Oranekwu2026} note that their ground truth dataset remains limited in statistical generalizability and has not yet undergone testing with end-users. \par
+Furthermore, Spyropoulos and Tsiantos \cite{Spyropoulos2025} admit to the use of simulated reports rather than authentic documents due to confidentiality, which may not fully capture the complexity of real-world law-enforcement data. \par
+Future work in this sector focuses on overcoming legal and policy complexities, where continuous updates are required to accommodate rapidly evolving regulations \cite{Konstantinidis2025}\cite{Oranekwu2026}. Authors suggest that federated Knowledge Graphs and decentralized technologies like blockchain may be necessary to address issues of data ownership and privacy compliance, such as GDPR requirements \cite{Konstantinidis2025}. Additionally, there is an identified need for more robust benchmarking methods to validate AI-driven interpretations against human-expert evaluations in high-stakes public environments \cite{Oranekwu2026}\cite{Konstantinidis2025}.
 
 \subsection{State-of-the-art in Logic Synthesis}
-The broader field of automated logic synthesis is dominated by descriptive question-answering tasks. While methods like 'Planned Query Guidance' improve accuracy, they are rarely tested against prescriptive legal constraints.
+The field of logic synthesis has evolved from monolithic sequence-to-sequence translation toward modular, neuro-symbolic pipelines that partition the semantic parsing of natural language into manageable logical components \cite{Agarwal202410119}\cite{Jiang202528}. These state-of-the-art approaches take advantage of the linguistic fluency of Large Language Models (LLMs), while enforcing the structural constraints of Knowledge Graphs (KGs) through various technical mechanisms and intermediate representations \cite{Emonet2025}\cite{Kovriguina2023}\cite{Walter2026271}.
+
+\subsubsection{Technical Mechanisms for Translation}
+Dominant neuro-symbolic techniques for bridging natural language and structured logic include Few-shot In-Context Learning (ICL) \cite{Avila202576}, Retrieval-Augmented Generation (RAG) \cite{Emonet2025} and Iterative Agentic Exploration \cite{Walter2026271}. \par
+Frameworks such as SymKGQA \cite{Agarwal202410119} combine few-shot ICL with function definitions to generate symbolic programs in KoPL (Knowledge Oriented Programming Language), allowing for step-by-step reasoning that is independent of the model's pre-trained knowledge of specific query grammars. Shah et al. \cite{Shah2024125} further enhance this via "Planned Query Guidance," where few-shot examples demonstrate a code-style reasoning process that handles multi-hop transitions line-by-line. \par
+To ground logic in specific KG schemas, authors utilize RAG variations that inject minimal subgraphs \cite{Kovriguina2023}, VoID descriptions or ShEx schemas into the prompt \cite{Emonet2025}. For example, SPARQLGEN \cite{Kovriguina2023} enriches prompts with a minimal RDF subgraph, sufficient to answer the query, reducing the need for models to memorize the entire graph. Emonet et al. \cite{Emonet2025} utilize Shape Expressions (ShEx) to define available predicates for specific classes, which significantly improves the model's ability to generate valid federated queries. \par
+The use of RAG is further extended beyond simple fact retrieval to the generation of \textit{ABox} (assertional box) instances for complex domain models. Vieira da Silva et al. \cite{VieiradaSilva2024} demonstrate that providing the full \textit{TBox} (terminological box, the schema-level knowledge of an ontology), within the prompt context is essential for reducing hallucinations when modeling industrial capabilities. By explicitly injecting the TBox, the LLM is forced to adhere to predefined class hierarchies and relationship constraints, such as domain and range axioms. This contextualization ensures that the generated instances are not only linguistically plausible but also logically consistent with the underlying ontology, successfully reducing the occurrence of model contradictions and invented properties. \par
+Recent research introduces iterative frameworks like GRASP \cite{Walter2026271}, which treat the LLM as an agent capable of exploring a graph through sequential function calls (search, list, execute). This methodology allows the model to dynamically refine its understanding of the graph's topology without being constrained by fixed context windows. Similarly, SAMM Copilot \cite{Mashhaditafreshi202536} employs iterative prompting and feedback loops to derive semantic Aspect Models from JSON data. \par
+Beyond the choice of underlying model, the selection of the formal target language itself remains a point of contention. A significant shift in logic synthesis is the proposal to use Controlled Natural Languages (CNLs), such as SQUALL or Sparklis, as the target logical form instead of formal languages like SPARQL. Lehmann et al. \cite{Lehmann20231348} argue that because CNLs are linguistically closer to both the input question and the vast amounts of natural language text used in LLM pre-training, they require significantly less fine-tuning data to achieve high accuracy. Their findings indicate that while LLMs may struggle with the rigid syntax of direct SPARQL, they demonstrate a "deeper understanding" of CNLs, allowing them to generate valid syntactic variations that are semantically equivalent to ground truth. For particularly complex queries such as comparatives, ordinals or differences, switching the parsing target from SPARQL to a natural and compact language like SQUALL can effectively double the semantic parsing accuracy.
+
+\subsubsection{Managing Structural Complexity}
+Handling complex schema mapping, particularly in event-based or multi-hop scenarios, requires more advanced strategies than simple triple-matching \cite{Mountantonakis2025}\cite{Jiang202528}. \par
+Jiang et al. \cite{Jiang202528} propose OntoSCPrompt, a two-stage architecture that separates Query Structure Prediction (Stage-S) from KG Content Population (Stage-C). In the first stage, the model forecasts a "sketch" or skeleton of the SPARQL query using special placeholders (e.g., [ent], [rel], [cct]), which is subsequently populated with graph-specific identifiers in the second stage. \par
+For event-based models like CIDOC-CRM, where answering a single question often requires traversing long, complex paths, Mountantonakis and Tzitzikas \cite{Mountantonakis2025} introduce a two-stage process using Ontology Path Patterns. Their method first predicts the required properties and classes to identify relevant paths of a specific radius before synthesizing the final query, effectively reducing the search space for the LLM.
+
+\subsubsection{Descriptive vs. Prescriptive Logic Synthesis}
+At this point of the analysis, it is important to make the following distinction. While the majority of technical advancements focus on Descriptive Question Answering (QA), which is retrieving factual data such as birthplaces or award winners \cite{Agarwal202410119}\cite{Ongris202444}\cite{Walter2026271}, a distinct subset of research addresses the synthesis of Prescriptive or Normative Rules \cite{Soularidis20247}\cite{Konstantinidis2025}. \par 
+Systems like GraphRAG \cite{Ongris202444} and UniKGQA \cite{Jiang202528} primarily focus on factual retrieval, translating natural language into executable queries (SPARQL, Cypher) to fetch stored values \cite{Agarwal202410119}\cite{Walter2026271}. \par
+In contrast, Soularidis et al. \cite{Soularidis20247} and Konstantinidis et al. \cite{Konstantinidis2025} attempt to synthesize formal logic that encodes rules for behavior or eligibility. Soularidis et al. utilize template-driven prompts and RAG to translate natural language rules from the Search and Rescue (SAR) domain into SWRL (Semantic Web Rule Language). Similarly, Konstantinidis et al. use LLMs to extract regulatory preconditions from legislative texts and formalize them as SHACL shapes, which serve as machine-readable rules for public service recommendations. Oranekwu et al. \cite{Oranekwu2026} bridge these two domains by extracting triples from manufacturer privacy policies to verify compliance against structured \textit{NIST} standards.
 
 \subsection{Methodologies for Logic Validation and Trust}
-Evaluation frameworks are shifting toward 'Knowledge Graphs as a Source of Trust'. Yet, current validation relies on probabilistic 'LLM-judges' or single benchmarks, leaving a gap for the deterministic testing required in rigorous governance environments.
+As neuro-symbolic systems transition from conceptual pilots to operational environments, the methodologies used to validate their logical outputs have become a primary focus of research, shifting the emphasis from simple performance metrics to the establishment of trust and traceability. Knowledge Graphs (KGs) serve as the fundamental "source of trust" in these architectures, providing a formal framework to evaluate the validity of queries generated by Large Language Models (LLMs) and acting as a foundation for explaining results \cite{Sequeda2025}.
+
+\subsubsection{Knowledge Graphs as a Source of Grounding and Repair}
+The integration of KGs into the validation pipeline provides the necessary grounding to mitigate the probabilistic nature of LLMs \cite{Lehmann20231348}. \par
+Allemang and Sequeda \cite{Allemang2025324} introduce \textit{Ontology-based Query Check (OBQC)}, a deterministic approach that utilizes the semantic constraints of an ontology (such as domain and range rules) to identify errors in generated SPARQL queries without relying on an LLM. When an error is detected, an LLM-Repair mechanism utilizes deterministic error explanations to iteratively prompt the model for correction, a cycle that continues until the query passes the ontological rules or reaches a predefined iteration limit. \par
+This focus on traceability is further advanced by Adam and Kliegr \cite{Adam2025}, who propose an intrinsically traceable approach to verification by instructing LLMs to avoid internal factual knowledge and instead find justification for RDF statements within retrieved external text snippets, directly generating references for every claim.
+
+\subsubsection{The Probabilistic vs. Deterministic Divide}
+Current literature reveals a clear methodological divide between probabilistic and deterministic validation techniques. \par
+Probabilistic Approaches often rely on benchmarking and "LLM-as-a-judge" frameworks. Gashkov et al. \cite{Gashkov2025177} employ instruction-tuned LLMs as binary classifiers to act as post-processing filters, removing incorrect SPARQL query candidates to enhance the \textit{Answer Trustworthiness Score (ATS)}. Similarly, Kosten et al. \cite{Kosten2024} utilize the Spider4SPARQL benchmark to evaluate model performance across varying levels of query hardness, finding that even state-of-the-art models struggle to surpass 51\% accuracy on complex multi-hop tasks. Meyer et al. \cite{Meyer2025280} provide an extensible framework, LLM-KG-Bench 3.0, which automates the evaluation of LLM answers using metrics such as normalized triple F1 and string similarity. \par
+In contrast, high-stakes domains prioritize deterministic approaches and rigid constraints. Tufek et al. \cite{Tufek202592} focus on validating semantic artifacts against industrial standards (e.g., \textit{OPC UA}), where natural language requirements are translated into machine-actionable SPARQL queries to ensure compliance. The requirement for absolute precision in high-stakes domains has led to the adoption of the \textit{"draft only, never execute"} paradigm. As proposed by Hanuragav and Gopinath \cite{Hanuragav2025}, this methodology explicitly prohibits the Large Language Model from direct interaction with the triple store. Instead, the model's output is restricted to intermediate mappers that are subsequently processed by a deterministic Python translator. This creates a \textit{"symbolic circuit breaker"}, ensuring that the final RDF output is idempotent, auditable and strictly compliant with regulatory requirements. This is a level of reliability that probabilistic filtering methods struggle to guarantee. Furthermore, SHACL shapes are frequently used as "logical gates" to enforce structural integrity and detect hallucinations in digital twins and public administration service models \cite{Hanuragav2025}\cite{Konstantinidis2025}\cite{VieiradaSilva2024}.
+
+\subsubsection{The Stability and Systematicity Gap}
+A critical shortcoming in current validation research is the \textit{stability gap}, where models fail to maintain logical consistency across structurally novel tasks. Schmidt et al. \cite{Schmidt20263} investigate \textit{systematicity}, the ability of an agent to understand complex expressions built from known constituents, through the CompoST benchmark. Their findings indicate that LLMs struggle to systematically interpret questions when the complexity of components deviates from the training samples, with performance scores rarely exceeding 0.57 even under optimal self-contained conditions. This highlights that most current validation is static, comparing an LLM's output against a single "golden standard" answer in a single-pass execution \cite{Lehmann20231348}\cite{Sequeda2025}\cite{Shah2024125}.
+
+\subsubsection{The Need for Dynamic Stability Testing}
+The synthesis of these sources reveals a significant vacuum in the literature regarding dynamic stability testing, such as Mutation-based Regression Testing. While Sequeda et al. \cite{Sequeda2025} acknowledge the importance of regression testing to ensure that accuracy does not decrease as ontologies are extended, there is no evidence of widespread use of mutation testing to ensure logic remains resilient under variable conditions. For high-stakes governance and public administration, measuring accuracy on a single pass is insufficient. 
 
 \section{Discussion and Research Gap}
-While the literature shows success in extraction and generation, there is a gap in deterministic validation. no study has yet implemented a comprehensive Mutation Testing framework to rigorously test the structural stability of LLM-generated SHACL shapes for public service eligibility.
-
+While the literature shows success in extraction and generation, there is a gap in deterministic validation. no study has yet implemented a comprehensive Mutation Testing framework to rigorously test the structural stability of LLM-generated SHACL shapes for public service eligibility. Future frameworks must address the variability of non-deterministic systems by establishing testing methodologies that guarantee logical stability across evolving regulatory landscapes. Based on the stability gap identified in Section , this dissertation proposes a Mutation-based Regression Testing framework...
 Other idea: most literature is about KGQA and information retrieval. Nobody (almost?) tries to make the sparql queries represent RULES and not just questions. 
-
 Other idea: The use of SHACL. Who uses it and how? Argument in favor of it being a good idea (unified graph, automation, explainability?)
