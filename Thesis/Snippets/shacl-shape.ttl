@@ -1,0 +1,34 @@
+:family_income_shape
+    a sh:NodeShape ;
+    sh:targetClass :Applicant ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Annual family income exceeds the limit." ;
+        sh:select """
+            SELECT ?this
+            WHERE {
+                {
+                    SELECT ?this (SUM(?val) AS ?totalIncome) WHERE {
+                        { ?this :hasIncome ?inc . 
+                          ?inc :amount ?val . }
+                        UNION
+                        { ?this :hasParent ?p . 
+                          ?p :hasIncome ?p_inc . 
+                          ?p_inc :amount ?val . }
+                    } GROUP BY ?this
+                }
+                OPTIONAL {
+                    {
+                        SELECT ?this (COUNT(DISTINCT ?child) AS ?depChildCountResult) WHERE {
+                            ?this :hasParent ?parent .
+                            ?parent :hasChild ?child .
+                            ?child :isDependent true .
+                        } GROUP BY ?this
+                    }
+                }
+                BIND(COALESCE(?depChildCountResult, 0) AS ?depChildCount)
+                BIND(30000 + (3000 * (IF(?depChildCount > 1, ?depChildCount - 1, 0))) AS ?limit)                
+                FILTER(?totalIncome > ?limit)
+            }
+        """ ;
+    ] .

@@ -25,10 +25,10 @@ A more catastrophic failure mode was observed in the Flash model's handling of b
 While the Pro model's failures were primarily logical, the Flash model struggled to maintain the boundaries of the language itself. The experimental data reveals a phenomenon of "Language Bleed," where the model, optimized for high-throughput generalized text generation, conflated the syntax of semantically similar languages.
 
 \subsection{SQL Contamination}
-The most frequent syntax error was the appearance of illegitimate keywords, such as \texttt{FILTER NOT (...)}. This construct is valid in SQL (WHERE NOT) but invalid in SPARQL (which requires FILTER (! ...) or FILTER NOT EXISTS). This suggests that the model's training data contains significantly more SQL examples than SPARQL, leading it to default to the more dominant syntax when the probability distribution for the next token is ambiguous.
+The most frequent syntax error was the appearance of illegitimate keywords, such as \texttt{FILTER NOT (...)}. This construct is valid in SQL (\texttt{WHERE NOT}) but invalid in SPARQL (which requires \texttt{FILTER (! ...)} or \texttt{FILTER NOT EXISTS}). This suggests that the model's training data contains significantly more SQL examples than SPARQL, leading it to default to the more dominant syntax when the probability distribution for the next token is ambiguous.
 
 \subsection{Token-Level Hallucinations}
-The model also exhibited errors that reveal its nature as a token predictor rather than a parser. The insertion of a dot (.) after \texttt{BIND} statements violates SPARQL grammar (where dots act as triple delimiters). This indicates the model might be trying to treat the code line as a natural language sentence that requires a period, ignoring the strict syntax tree of the query language. \par
+The model also exhibited errors that reveal its nature as a token predictor rather than a parser. The insertion of a dot (.) after \texttt{BIND} statements violates SPARQL grammar (where dots act as triple delimiters). \par
 Furthermore, the model frequently attempted to use dot notation (e.g., \texttt{?s.hasChild}) or complex property path slashes (e.g., \texttt{?s /:hasChild}) in contexts where explicit triple patterns were required. While property paths exist in SPARQL 1.1, the specific context in which such syntax was generated often mimicked Object-Oriented programming accessors rather than valid RDF graph traversal.
 
 \subsection{Namespace Invention}

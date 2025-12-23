@@ -78,6 +78,29 @@
   \renewcommand{\headrulewidth}{0pt}
 }
 
+% --- CLEAN CODE SNIPPET SETUP ---
+\usepackage{listings}
+\usepackage{xcolor}
+% Custom definition for JSON language as it is not built-in to listings
+\lstdefinelanguage{json}{
+    basicstyle=\small\ttfamily,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{white},
+    tabsize=2,
+    keywords={false,true,null},
+    morecomment=[s]{/*}{*/},
+    morecomment=[l]//,
+    morestring=[b]",
+    % Highlighting keys vs values is complex in listings, 
+    % so we keep it clean and academic.
+}
+
 % --- 8. ESSENTIAL PACKAGES ---
 \usepackage{graphicx}      % Images
 \usepackage{float}         % Better image placement

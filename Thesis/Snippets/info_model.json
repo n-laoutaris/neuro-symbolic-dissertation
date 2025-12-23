@@ -1,0 +1,28 @@
+{
+    "name": "family_income_condition",
+    "desc": "Annual family income must not exceed 30,000, increased by 3,000 for each dependent child after the first.",
+    "constrains": [
+      {
+        "name": "total_family_income",
+        "related_paths": [
+          {
+            "path": ["hasIncome","amount"],
+            "datatype": "xsd:decimal"
+          },
+          {
+            "path": ["hasParent","hasIncome","amount"],
+            "datatype": "xsd:decimal"
+          }
+        ]
+      },
+      {
+        "name": "is_dependent_child_of_parents",
+        "related_paths": [
+          {
+            "path": ["hasParent","hasChild","isDependent"],
+            "datatype": "xsd:boolean"
+          }
+        ]
+      }
+    ]
+}

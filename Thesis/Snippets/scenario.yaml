@@ -1,0 +1,6 @@
+- id: SCN_03
+  description: "Base income is too high."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:DadIncome :amount 26001.0 .
