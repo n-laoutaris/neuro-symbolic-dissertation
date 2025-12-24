@@ -1,0 +1,62 @@
+\chapter{Glossary of Terms}\label{app:glossary}
+This glossary provides definitions for the terms utilized throughout this dissertation. The terms are categorized by their domain of origin.
+
+\section*{Artificial Intelligence \& Large Language Models}
+
+\begin{description}[style=nextline, leftmargin=1cm, font=\bfseries]
+
+    \item[Hallucination] 
+    A phenomenon in Large Language Models where the system generates text that is syntactically correct but factually incorrect or logically inconsistent with the input context.
+    
+    \item[In-Context Learning (ICL)] 
+    The ability of an LLM to perform a task after being shown a few examples within the prompt, without any permanent updates to its underlying neural weights.
+    
+    \item[Chain-of-Thought (CoT) Prompting] 
+    A prompting technique that encourages an LLM to generate intermediate reasoning steps before arriving at a final answer, often used to improve performance on complex logical or mathematical tasks.
+
+    \item[Temperature] 
+    A hyperparameter in LLM generation that controls the randomness of the output. A temperature of 0 aims for the most probable/deterministic response, while higher values increase creativity and variability.
+
+    \item[Model-as-a-Service (MaaS)] 
+    A cloud-computing model where pre-trained Large Language Models are hosted by a provider (e.g., Google, OpenAI) and accessed by developers via an API, removing the need for local hardware at the cost of dependency on the provider's infrastructure.
+
+\end{description}
+
+\section*{Semantic Web \& Knowledge Engineering}
+
+\begin{description}[style=nextline, leftmargin=1cm, font=\bfseries]
+
+    \item[Knowledge Graph (KG)] 
+    A structured representation of information using a graph-based data model, where nodes represent entities and edges represent the relationships between them, grounded in a formal ontology.
+
+    \item[RDFS (Resource Description Framework Schema)] 
+    A formal way of representing properties, and the relationships between those properties, within a specific domain of interest. This work utilizes RDFS to define the "Citizen" and "Public Service" schemas.
+
+    \item[Turtle (Terse RDF Triple Language)] 
+    A syntax and file format for the Resource Description Framework (RDF) that is designed to be both machine-readable and easily edited by humans.
+    
+    \item[SHACL (Shapes Constraint Language)] 
+    A World Wide Web Consortium (W3C) standard for validating RDF graphs against a set of conditions. In this work, it serves as the primary symbolic engine for eligibility verification.
+    
+    \item[SPARQL (SPARQL Protocol And RDF Query Language)] 
+    An RDF query language and data access protocol used to retrieve and manipulate data stored in Resource Description Framework (RDF) format.  
+
+    \item[Graph Edit Distance (GED)] 
+    A metric for measuring the similarity between two graphs by calculating the minimum number of operations (node/edge insertions, deletions, or substitutions) required to transform one graph into the other.
+
+    \item[Abstract Syntax Tree (AST)] 
+    A tree representation of the abstract syntactic structure of source code (like SPARQL). Comparing ASTs allows for measuring logical similarity rather than just textual overlap.
+
+\end{description}
+
+\section*{Administrative Law \& Public Governance}
+
+\begin{description}[style=nextline, leftmargin=1cm, font=\bfseries]
+
+    \item[Once-Only Principle (OOP)] 
+    A European Union e-government strategy aimed at ensuring that citizens and businesses only have to provide standard information to administrations once, with authorities then sharing this data internally.
+    
+    \item[Digital Sovereignty] 
+    The capacity of a state to exert authority over its digital infrastructure, including the "code" of its laws, without being dependent on proprietary, foreign-controlled ecosystems.
+    
+\end{description}
