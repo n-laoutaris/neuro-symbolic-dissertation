@@ -1,5 +1,4 @@
-\chapter{Results}
-\label{ch:results}
+\chapter{Results} \label{ch:results}
 This chapter presents the quantitative findings obtained from the experimental evaluation of the neuro-symbolic pipeline. The analysis strictly follows the performance metrics defined in the methodology, assessing the system across three cascading thresholds of success: syntactic validity (code generation), functional logic accuracy (reasoning fidelity), and overall operational reliability (end-to-end feasibility). Broader interpretation of these patterns and their implications for public administration systems are discussed in Chapter \ref{ch:discussion}.
 
 \section{Experimental Dataset}
@@ -46,17 +45,17 @@ Figure \ref{fig:syntax_reliability} illustrates the success rates across all con
 \end{figure}
 
 \subsubsection{Impact of Document Complexity} 
-The complexity of the source document served as a strong predictor of failure.\par
+As was expected, the complexity of the source document served as a strong predictor of failure. \par
 In the case of the Parental Leave document (Intermediate complexity), both models performed adequately. Even the weaker Flash model achieved a 75\% validity rate using the Reflexion and ZeroShot strategies. \par
 On the contrary, the Student Housing document (High complexity) acted as a strict filter. Flash failed to produce valid code in the vast majority of attempts (36 out of 60 runs failed syntax checks), whereas Pro proved strong enough to handle the increased logical depth, though it still suffered a 20\% degradation compared to the simpler use case.
 
 \subsubsection{Impact of Model Class} 
-The data reveals a disparity in coding capability between the two model variants.\par
+The data reveals a disparity in coding capability between the two model variants. \par
 The Gemini 2.5 Pro model demonstrated high reliability, achieving a 100\% success rate on the Parental Leave document and maintaining an 80\% success rate on the complex Student Housing document (under Default prompting). \par
 In contrast, the Gemini 2.5 Flash model struggled significantly with syntactic precision. While it achieved moderate success on the simpler Parental Leave document (ranging from 50\% to 75\%), its performance collapsed on the complex Student Housing document, with success rates dropping as low as 5\% (Reflexion) to 20\% (Default).
 
 \subsubsection{Impact of Prompting Strategy} 
-The impact of prompting strategies varied by model architecture.\par
+The impact of prompting strategies varied by model architecture. \par
 For Flash, the \textit{Reflexion} strategy provided a significant boost on the simpler document (improving validity from 50\% to 75\%). However, this benefit vanished on the complex document, where Reflexion actually performed worse (5\%) than the Default prompt (20\%). \par
 For Pro, the \textit{Default} and \textit{Reflexion} strategies performed identically (80\% on Housing), while the \textit{ZeroShot} strategy resulted in a notable drop in stability (falling to 60\% on Housing). 
 
