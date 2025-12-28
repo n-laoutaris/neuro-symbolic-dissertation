@@ -1,8 +1,8 @@
 \chapter{Results} \label{ch:results}
-This chapter presents the quantitative findings obtained from the experimental evaluation of the neuro-symbolic pipeline. The analysis strictly follows the performance metrics defined in the methodology, assessing the system across three cascading thresholds of success: syntactic validity (code generation), functional logic accuracy (reasoning fidelity), and overall operational reliability (end-to-end feasibility). Broader interpretation of these patterns and their implications for public administration systems are discussed in Chapter \ref{ch:discussion}.
+This chapter presents the quantitative findings of the experimental evaluation of the Neuro-Symbolic pipeline. The analysis follows the main performance metrics described in the methodology, assessing the system across the thresholds of success of syntactic validity (code generation) and functional logic accuracy (reasoning fidelity), adding another metric of overall operational reliability (end-to-end feasibility). Broader interpretation of these patterns and their implications for public administration systems are discussed in Chapter \ref{ch:discussion}.
 
 \section{Experimental Dataset}
-The experimental campaign consisted of a total of 170 end-to-end pipeline executions ("Runs"). Each run consisted of the steps that were analyzed on the previous chapter. The distribution of these runs across the varying configurations is detailed in Table \ref{tab:experiment_counts}. Due to the operational constraints discussed in Section \ref{subsec:api_limits}, the dataset is unbalanced, with the "Flash" model variant accounting for a larger proportion of the total runs.
+The experiments consisted of a total of 170 end-to-end pipeline executions ("uns"). The distribution of these runs across the varying configurations is detailed in Table \ref{tab:experiment_counts}. Due to the operational constraints discussed in Section \ref{subsec:api_limits}, the dataset is unbalanced, with the "Flash" model variant accounting for a larger proportion of the total runs.
 
 \begin{table}[htbp]
     \centering
@@ -46,13 +46,13 @@ Figure \ref{fig:syntax_reliability} illustrates the success rates across all con
 
 \subsubsection{Impact of Document Complexity} 
 As was expected, the complexity of the source document served as a strong predictor of failure. \par
-In the case of the Parental Leave document (Intermediate complexity), both models performed adequately. Even the weaker Flash model achieved a 75\% validity rate using the Reflexion and ZeroShot strategies. \par
-On the contrary, the Student Housing document (High complexity) acted as a strict filter. Flash failed to produce valid code in the vast majority of attempts (36 out of 60 runs failed syntax checks), whereas Pro proved strong enough to handle the increased logical depth, though it still suffered a 20\% degradation compared to the simpler use case.
+In the case of the Parental Leave document (Intermediate complexity), both models performed adequately. Even the smaller Flash model achieved a 75\% validity rate using the Reflexion and ZeroShot strategies. \par
+On the contrary, the Student Housing document (High complexity) acted as a stricter filter. Flash failed to produce valid code in the vast majority of attempts (36 out of 60 runs failed syntax checks), while Pro proved strong enough to handle the increased logical depth, even though it still suffered a 20\% degradation compared to the simpler use case.
 
 \subsubsection{Impact of Model Class} 
-The data reveals a disparity in coding capability between the two model variants. \par
-The Gemini 2.5 Pro model demonstrated high reliability, achieving a 100\% success rate on the Parental Leave document and maintaining an 80\% success rate on the complex Student Housing document (under Default prompting). \par
-In contrast, the Gemini 2.5 Flash model struggled significantly with syntactic precision. While it achieved moderate success on the simpler Parental Leave document (ranging from 50\% to 75\%), its performance collapsed on the complex Student Housing document, with success rates dropping as low as 5\% (Reflexion) to 20\% (Default).
+Data reveals a disparity in syntactic capabilities between the two model variants. \par
+The Pro model demonstrated high reliability, achieving a 100\% success rate on the Parental Leave document and maintaining an 80\% success rate on the complex Student Housing document (under Default prompting). \par
+In contrast, the Flash model struggled significantly with syntactic precision. While it achieved moderate success on the simpler Parental Leave document (ranging from 50\% to 75\%), its performance collapsed on the complex Student Housing document, with success rates dropping as low as 5\% (Reflexion) to 20\% (Default).
 
 \subsubsection{Impact of Prompting Strategy} 
 The impact of prompting strategies varied by model architecture. \par
@@ -70,8 +70,8 @@ To better understand the mechanisms of failure, the invalid runs were categorize
 \end{figure} 
 
 The data indicates that SPARQL Syntax Errors were the dominant failure mode across all configurations. \par
-Gemini 2.5 Flash exhibited a high frequency of SPARQL errors, particularly on the complex Student Housing document, where 76.7\% of all runs failed due to query syntax. Notably, Flash also produced a non-negligible rate of RDF Syntax errors (5.0\% on Parental Leave, 11.7\% on Student Housing), indicating occasional failures in generating even the fundamental file structure. \par
-Gemini 2.5 Pro demonstrated significantly higher stability. It produced zero RDF syntax errors across all 50 experiments. Its failures were exclusively confined to SPARQL syntax, with error rates of 5.0\% on the simpler document and 26.7\% on the complex document.
+Gemini 2.5 Flash exhibited a high frequency of SPARQL errors, particularly on the complex Student Housing document, where 76.7\% of all runs failed due to query syntax. Notably, Flash also produced a non-negligible rate of RDF Syntax errors (5.0\% on Parental Leave, 11.7\% on Student Housing), indicating occasional failures in generating even fundamental structure. \par
+Gemini 2.5 Pro demonstrated significantly higher syntax reliability. It produced zero RDF syntax errors across all 50 experiments. Its failures were exclusively confined to SPARQL syntax, with error rates of 5.0\% on the simpler document and 26.7\% on the complex document.
 
 \section{Logic Validity}
 For the subset of runs that successfully produced syntactically valid code, the focus shifts to \textit{Functional Logic Accuracy}. A run is classified as having "Perfect Logic" if and only if the generated SHACL shapes correctly identify the expected number of violations for \textit{every single scenario} in the test suite (both the baseline Golden Citizen and all edge cases). Runs that crashed during execution or failed syntax checks were excluded from this analysis to isolate the reasoning capability of the models. \par
