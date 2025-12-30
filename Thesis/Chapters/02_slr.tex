@@ -1,4 +1,4 @@
-\chapter{Systematic Literature Review}
+\chapter{Systematic Literature Review} \label{ch:slr}
 This chapter details a Systematic Literature Review (SLR) with the goal to establish the necessary theoretical foundations of Neuro-Symbolic AI.
 
 \section{Introduction}
@@ -224,6 +224,6 @@ The most critical shortcoming identified is the reliance on static, single-pass 
 As identified in Table \ref{tab:extraction_matrix}, current validation is predominantly probabilistic. Even deterministic approaches, such as those by Hanuragav and Gopinath \cite{Hanuragav2025} or Tufek et al. \cite{Tufek202592}, focus on structural syntax or version-control compliance. To date, no study has implemented a comprehensive \textit{Mutation Testing Framework} to strictly test the structural and logical stability of LLM-generated SHACL shapes. For high-stakes digital governance, an 88\% precision rate (as reported in descriptive tasks \cite{Adam2025}) is not a useful nor representative result. Future frameworks must address the variability of non-deterministic systems by establishing testing methodologies that guarantee logical stability across constantly evolving regulatory landscapes. \par
 While Sequeda et al. \cite{Sequeda2025} acknowledge the importance of regression testing to ensure that accuracy does not decrease as ontologies are extended, there is no evidence of widespread use to ensure logic remains resilient under variable conditions. For high-stakes governance and public administration, measuring accuracy on a single pass is insufficient.
 
-\subsection{Contribution of this Study}
+\section{Contribution of this Study}
 Based on the gaps identified above, this dissertation proposes a Neuro-Symbolic framework that utilizes a \textit{JSON Information Model} as an intermediate architectural bridge to generate SHACL-based eligibility rules. SHACL is chosen specifically for its ability to act as a "logical gate", providing the unified graph structure, explainability and automation required for public administration. \par
 To address the validation vacuum, this study introduces a \textit{Deterministic Mutation Testing} methodology. By systematically mutating citizen attributes to evaluate the "rejection rate" of synthesized SPARQL logic, the framework moves beyond probabilistic retrieval to provide a functional guarantee of stability. This approach, detailed in the following Pilot Study, represents a transition from checking if a model is "correct once" to verifying that the synthesized law is "functionally infallible" across variable scenarios.
