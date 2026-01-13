@@ -12,10 +12,22 @@ This difference reveals that the model has successfully memorized the \textit{gr
 The model's inability to properly understand graph topology led to recurring critical failures in the generated SPARQL constraints. Below we analyze some of the most prominent mistakes discovered upon human inspection of the runs flagged by the system as not perfect.
 
 \subsubsection{The Double-Counting Trap}
-In scenarios involving family units (for example, two parents with two children), the model consistently failed to apply set-theoretic distinctness. By generating queries that traversed from \texttt{:Parent} to \texttt{:Child} without the \texttt{COUNT(DISTINCT ?child)} modifier, the model inadvertently created a multiplicative join. Since both parents are linked to the same children, the query counted each child twice (once per parent path), artificially inflating the "Child Count" variable. This subsequently distorted calculations, leading to false validations where ineligible families were approved due to miscalculated thresholds.
+In scenarios involving family units (for example, two parents with two children), the model consistently failed to apply set-theoretic distinctness. By generating queries that traversed from \texttt{:Parent} to \texttt{:Child} without the \texttt{COUNT(DISTINCT ?child)} modifier, the model inadvertently created a multiplicative join. Since both parents are linked to the same children, the query counted each child twice (once per parent path), artificially inflating the "Child Count" variable. This subsequently distorted calculations, leading to false validations where ineligible families were approved due to miscalculated thresholds. \par
+Figure \ref{fig:double_counting} illustrates this. The traversal from Applicant to Mother (Blue) and Father (Red) creates two parallel branches. Because both branches terminate at the same sibling nodes, the resulting count is the sum of the branches (4) rather than the cardinality of the unique entities (2).
+\begin{figure}[htbp] 
+    \centering 
+    \includegraphics[width=0.9\textwidth]{Images/double_counting.png} 
+    \caption{Illustration of the Double Counting trap} 
+    \label{fig:double_counting}
+\end{figure}
 
 \subsubsection{The Cartesian Product Trap}
-Similarly, when aggregating income, the model frequently joined Income patterns and Child patterns in a single WHERE clause without sub-query separation. This caused the SPARQL engine to generate a Cartesian product of the two datasets, effectively multiplying every income record by every child record. This resulted in erroneous rejections where families were flagged with violations due to massive over-estimations of total family incomes.
+Similarly, when aggregating income, the model frequently joined Income patterns and Child patterns in a single \texttt{WHERE} clause without sub-query separation. This caused the SPARQL engine to generate a Cartesian product of the two datasets, effectively multiplying every income record by every child record. This resulted in erroneous rejections where families were flagged with violations due to massive over-estimations of total family incomes. A partial example of a wrong query generated to trigger the Catresian Product Trap can be seen in Listing \ref{lst:cartesian-trap}
+\lstinputlisting[
+    language=json, 
+    caption={Generated query that contains the Cartesian Product Trap}, 
+    label={lst:cartesian-trap}
+]{Snippets/cartesian_trap.sql}
 
 \subsubsection{Recursive Loops and Infinite Regression} 
 A more catastrophic failure mode was observed in the Flash model's handling of bidirectional relationships. The Student Housing ontology defines inverse relationships (e.g., a \texttt{:Parent} has a \texttt{:Child}, and that \texttt{:Child} has a \texttt{:Parent}). In several runs, the model generated SPARQL property paths that traversed these links cyclically (e.g., \texttt{:hasParent :hasChild :hasParent ...}) without a terminating condition. This created infinite recursion loops during execution, causing the PySHACL validation engine to crash entirely (logged as "Python Kernel Crash" in Section \ref{subsec:pipeline_attrition}). This demonstrates that the model treats graph traversal as a linguistic association task ("Parents are related to Children") rather than a directed graph walk, failing to anticipate the computational consequences of such cycles.
