@@ -1,0 +1,32 @@
+- id: SCN_00
+  description: "Conforms to all preconditions."
+  expected_violation_count: 0
+  actions: []
+
+- id: SCN_01
+  description: "Tenure too short."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:DimitrisJob :employmentStartDate "2025-08-01"^^xsd:date .
+
+- id: SCN_02
+  description: "Child is older than 8 years."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:Nikolas :birthDate "2015-05-20"^^xsd:date .
+
+- id: SCN_03
+  description: "Unemployed."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:DimitrisJob :isActive false .
+
+- id: SCN_04
+  description: "Wrong employment sector."
+  expected_violation_count: 1
+  actions:
+    - type: patch_node
+      turtle: ex:DimitrisJob :employmentSector "Freelance" .

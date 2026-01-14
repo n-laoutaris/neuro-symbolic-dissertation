@@ -72,7 +72,7 @@ This failure mode correlates strongly with the Dependency Depth of the required 
 This suggests that while the tested LLMs can successfully act like "Semantic Parsers" for straightforward bureaucracy, they lack the internal "Working Memory" required to maintain the state of multi-variable equations throughout the code generation process, consistent with observed computational limits of transformer-based models \cite{dziri2023faithfatelimitstransformers}.
 
 \section{The Contribution of Prompt Engineering}
-The experimental results challenge the prevailing narrative that "better prompting" is a universal solution to model limitations. Instead, the data reveals complex trade-offs where techniques that improve syntactic stability may inadvertently degrade logical reasoning.
+The experimental results challenge the prevailing narrative that "better prompting" is a universal solution to model limitations \cite{Chen2023Unleashing}. Instead, the data reveals complex trade-offs where techniques that improve syntactic stability may inadvertently degrade logical reasoning.
 
 \subsection{The "Copy-Paste" Bias}
 The Default (Few-Shot) strategy proved essential for stabilizing syntax in the Pro model, boosting syntactic validity from 60\% to 80\% on the complex document. However, this stability came at a cost to logical accuracy. Zero-Shot strategy, despite producing broken code more often, achieved the highest logical accuracy (33.3\%) when it \textit{did} compile. \par

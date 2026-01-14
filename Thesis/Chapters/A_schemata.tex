@@ -1,0 +1,26 @@
+\chapter{Citizen Schemas and Golden Citizens} \label{app:citizen_schemata}
+This appendix provides the full \texttt{ttl} files that describe the LLM-generated citizen schemas used as context for the pipeline, as detailed in Section \ref{subsec:citizen_schema}, along with their respective hand-crafted "Golden Citizen" instance graphs described in Section \ref{subsec:golden_citizen}. As per the description of the Experimental Design on Section \ref{sec:experimental_design}, there is one pair of files per document use case.
+
+\section*{Student Housing Use Case}
+
+\lstinputlisting[
+    language=json, 
+    caption={The Citizen Schema RDFS for the Student Housing document}, 
+]{Snippets/student_housing schema.ttl}
+
+\lstinputlisting[
+    language=json, 
+    caption={The Golden Citizen for the Student Housing document}, 
+]{Snippets/student_housing eligible.ttl}
+
+\section*{Parental Leave Use Case}
+
+\lstinputlisting[
+    language=json, 
+    caption={The Citizen Schema RDFS for the Parental Leave document}, 
+]{Snippets/parental_leave schema.ttl}
+
+\lstinputlisting[
+    language=json, 
+    caption={The Golden Citizen for the Parental Leave document}, 
+]{Snippets/parental_leave eligible.ttl}

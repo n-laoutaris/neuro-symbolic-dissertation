@@ -1,27 +1,27 @@
 \ProvidesPackage{ihu_thesis}
 
-% --- 1. PAGE LAYOUT ---
+% --- PAGE LAYOUT ---
 % Margins: Top/Bottom/Outer=25mm, Inner=35mm (25+10 gutter)
 \usepackage[top=25mm, bottom=25mm, outer=25mm, inner=35mm]{geometry}
 
-% --- 2. FONTS & ENCODING ---
+% --- FONTS & ENCODING ---
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{tgtermes} 
-\usepackage[scale=0.95]{tgheros} % Use TeX Gyre Heros (A modern, sharper Arial/Helvetica clone)
+\usepackage[scale=0.95]{tgheros} % TeX Gyre Heros (A modern, sharper Arial/Helvetica clone)
 \usepackage{newtxmath} % Use NewTX Math to make math equations match Times New Roman perfectly
 \usepackage{microtype}      % Improves text justification
 
-% --- 3. PARAGRAPH & SPACING ---
+
+% --- PARAGRAPH & SPACING ---
 \usepackage{setspace}
-\onehalfspacing             % 1.5 Line Spacing
+\setstretch{1.43} % This is what Word calls one half spacing for Times New Roman 12pt             
 \usepackage{enumitem}
 \setlist{nosep} % Kills vertical space between list items and around the list
 
-% --- 4. HEADINGS (Matching Word Styles) ---
+% --- HEADINGS (Matching Word Styles) ---
 \usepackage{titlesec}
 \setcounter{secnumdepth}{2} 
-
 % H1: Chapter (Arial 28 Bold) - "1 Introduction" (No "Chapter" word)
 \titleformat{\chapter}[block] 
   {\normalfont\sffamily\fontsize{28}{34}\selectfont\bfseries} % Format
@@ -50,7 +50,7 @@
   {}{0pt}{}
 \titlespacing*{\paragraph}{0pt}{12pt}{6pt}
 
-% --- 5. CAPTIONS (Pictures & Tables) ---
+% --- CAPTIONS (Pictures & Tables) ---
 \usepackage[font={small,rm}, labelfont=bf, labelsep=colon]{caption} 
 % Set 12pt space (approx 1 blank line) between caption and content
 \captionsetup{skip=12pt}
@@ -58,27 +58,27 @@
 \captionsetup[table]{position=top}
 \captionsetup[figure]{position=bottom}
 
-% --- 6. TABLES ---
+% --- TABLES ---
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{longtable}
 
-% --- 7. PAGE NUMBERING ---
+% --- PAGE NUMBERING ---
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{} % Clear all default headers/footers
 % Set Page Number to "Outer" corner (Left on Even, Right on Odd)
-\fancyfoot[LE,RO]{\thepage} 
+\fancyfoot[LE,RO]{-\thepage-} 
 % Remove the horizontal rule/line in header 
 \renewcommand{\headrulewidth}{0pt}
 % Fix for "Plain" pages to match the style
 \fancypagestyle{plain}{
   \fancyhf{}
-  \fancyfoot[LE,RO]{\thepage}
+  \fancyfoot[LE,RO]{-\thepage-}
   \renewcommand{\headrulewidth}{0pt}
 }
 
-% --- CLEAN CODE SNIPPET SETUP ---
+% --- CODE SNIPPETS ---
 \usepackage{listings}
 \usepackage{xcolor}
 % Custom definition for JSON language as it is not built-in to listings
@@ -101,12 +101,12 @@
     % so we keep it clean and academic.
 }
 
-% --- 8. ESSENTIAL PACKAGES ---
+% --- ESSENTIAL PACKAGES ---
 \usepackage{graphicx}      % Images
 \usepackage{float}         % Better image placement
 \usepackage{csquotes}      % Context sensitive quotes
 \usepackage{pdfpages}      % To inject the Word cover page
 \usepackage[hidelinks]{hyperref} % Clickable links (black)
 
-% --- 9. BIBLIOGRAPHY SETUP ---
+% --- BIBLIOGRAPHY ---
 \usepackage[style=ieee, backend=biber]{biblatex}
