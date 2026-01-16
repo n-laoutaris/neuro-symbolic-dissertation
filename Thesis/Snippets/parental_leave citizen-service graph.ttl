@@ -1,0 +1,51 @@
+@prefix cccev: <http://data.europa.eu/m8g/> .
+@prefix cpsv: <http://purl.org/vocab/cpsv#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix ex: <http://example.org/> .
+@prefix ns1: <http://example.org/schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:Dimitris a ns1:Applicant,
+        ns1:Person ;
+    ns1:birthDate "1990-05-15"^^xsd:date ;
+    ns1:hasChild ex:Nikolas ;
+    ns1:hasEmployment ex:DimitrisJob .
+
+ex:parental_leave a cpsv:PublicService ;
+    cpsv:holdsRequirement ex:child_age_condition,
+        ex:employment_duration_condition,
+        ex:employment_status_and_sector_condition .
+
+ex:child_age_condition a cccev:Constraint ;
+    cccev:constrains ex:child_birth_date ;
+    dct:description "The beneficiary's child must be under the age of eight (8)." .
+
+ex:child_birth_date a cccev:InformationConcept ;
+    ex:mapsTo ex:Nikolas .
+
+ex:employment_duration_condition a cccev:Constraint ;
+    cccev:constrains ex:employment_start_date ;
+    dct:description "The beneficiary must have completed at least one (1) year of continuous employment (or successive fixed-term contracts) with the same employer." .
+
+ex:employment_sector a cccev:InformationConcept ;
+    ex:mapsTo ex:DimitrisJob .
+
+ex:employment_start_date a cccev:InformationConcept ;
+    ex:mapsTo ex:DimitrisJob .
+
+ex:employment_status_and_sector_condition a cccev:Constraint ;
+    cccev:constrains ex:employment_sector,
+        ex:is_currently_employed ;
+    dct:description "The beneficiary must be employed under a dependent employment relationship or a salaried mandate in the private or public sector." .
+
+ex:is_currently_employed a cccev:InformationConcept ;
+    ex:mapsTo ex:DimitrisJob .
+
+ex:Nikolas a ns1:Person ;
+    ns1:birthDate "2022-03-10"^^xsd:date .
+
+ex:DimitrisJob a ns1:EmploymentRecord ;
+    ns1:employmentSector "Private" ;
+    ns1:employmentStartDate "2023-01-01"^^xsd:date ;
+    ns1:isActive true .
+
