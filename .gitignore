@@ -1,31 +1,45 @@
-# Testing artifacts. The results of these are tracked in CSV files.
+# Neuro-Symbolic Dissertation Repository .gitignore
+# This file specifies files and directories that Git should ignore.
+# Organized by category for clarity.
+
+# Testing Artifacts
+# Results of experiments are tracked in CSV file, so ignore generated artifacts.
 Testing Artifacts/
 
-# Secrets
+# Secrets and Environment Files
 .env
 
-# Global ignores for OS/editor artifacts and checkpoints
-.DS_Store
-Thumbs.db
-desktop.ini
+# Python-specific Ignores
 __pycache__/
 *.py[cod]
 *.so
+.pytest_cache/
+.coverage
+*.egg-info/
 
-# Jupyter notebook checkpoints 
+# Jupyter Notebook Checkpoints
 .ipynb_checkpoints/
 
-# VS Code workspace files
+# Virtual Environments
+venv/
+.venv/
+
+# Operating System and Editor Artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VS Code Workspace Files
 .vscode/
 
-# Node/npm artifacts 
+# Node.js/npm Artifacts
 node_modules/
 npm-debug.log*
 
-# OneDrive specific files 
+# OneDrive Specific Files
 ~$*
 
-# LaTeX build artifacts
+# LaTeX Build Artifacts
 *.aux
 *.lol
 *.fdb_latexmk
@@ -36,9 +50,9 @@ npm-debug.log*
 *.toc
 *.lof
 *.lot
-# Bibliography Artifacts
+
+# LaTeX Bibliography Artifacts
 *.bbl
 *.bcf
 *.blg
 *.run.xml
-Thesis/main.lol
