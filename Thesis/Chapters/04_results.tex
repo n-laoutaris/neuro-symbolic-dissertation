@@ -69,16 +69,17 @@ To better understand the mechanisms of failure, the invalid runs were categorize
     \label{fig:error_analysis} 
 \end{figure} 
 
-The data indicates that SPARQL Syntax Errors were the dominant failure mode across all configurations. \par
+We can see from the data that SPARQL Syntax Errors seem to be the dominant failure mode across all configurations. \par
 Gemini 2.5 Flash exhibited a high frequency of SPARQL errors, particularly on the complex Student Housing document, where 76.7\% of all runs failed due to query syntax. Notably, Flash also produced a non-negligible rate of RDF Syntax errors (5.0\% on Parental Leave, 11.7\% on Student Housing), indicating occasional failures in generating even fundamental structure. \par
 Gemini 2.5 Pro demonstrated significantly higher syntax reliability. It produced zero RDF syntax errors across all 50 experiments. Its failures were exclusively confined to SPARQL syntax, with error rates of 5.0\% on the simpler document and 26.7\% on the complex document.
 
 \section{Logic Validity}
-For the subset of runs that successfully produced syntactically valid code, the focus shifts to \textit{Functional Logic Accuracy}. A run is classified as having "Perfect Logic" if and only if the generated SHACL shapes correctly identify the expected number of violations for \textit{every single scenario} in the test suite (both the baseline Golden Citizen and all edge cases). Runs that crashed during execution or failed syntax checks were excluded from this analysis to isolate the reasoning capability of the models. \par
-It is critical to note that 'Logic Accuracy' is evaluated as a holistic, end-to-end performance metric. A failure to correctly validate a citizen scenario may stem from errors at any stage of the neuro-symbolic pipeline: a missed precondition during the initial summarization (Stage 1), a malformed mapping in the Information Model (Stage 2), or an incorrect SHACL generation (Stage 4). Consequently, a 'Logic Failure' indicates that the system, as a whole, failed to enforce the regulation, regardless of which specific component was the root cause.
+As explained in the previous chapter, the focus shifts to \textit{Functional Logic Accuracy} only for the subset of runs that successfully produced syntactically valid code. \par
+It was proven useful at this point to differentiate between partially correct runs, where some scenarios returned positive results and some negative, and a "Perfect Logic" run. A run is classified as having "Perfect Logic" if and only if the generated SHACL shapes correctly identify the expected number of violations for \textit{every single scenario} in the test suite (both the baseline Golden Citizen and all edge cases). Runs that crashed during execution or failed syntax checks were excluded from this analysis to isolate the reasoning capability of the models. \par
+It is also important to note here that "Logic Accuracy" is evaluated as a holistic, performance metric, that refers to the end-to-end pipeline as a whole. Keep in mind that a failure to correctly validate a citizen scenario may very well stem from errors at any stage of the Neuro-Symbolic pipeline. Examples include a missed precondition during the initial summarization (Stage 1), a malformed mapping in the Information Model (Stage 2), or an incorrect SHACL generation (Stage 4). Consequently, a "Logic Failure" indicates that the system, as a whole, failed to enforce the regulation, regardless of which specific component was the root cause.
 
 \subsection{Success Rate}
-Figure \ref{fig:logic_reliability} illustrates the rate of flawless logical execution across configurations.
+Having made those distinctions, Figure \ref{fig:logic_reliability} illustrates the rate of flawless logical execution across configurations.
 
 \begin{figure}[htbp] 
     \centering 
@@ -90,7 +91,7 @@ Figure \ref{fig:logic_reliability} illustrates the rate of flawless logical exec
 \subsubsection{Impact of Document Complexity}
 Consistent with the syntax results, the complexity of the document was the primary determinant of success. \par
 Parental Leave, having simpler logic, allowed for high performance, with the best-performing configuration (Flash/Default) achieving an 88.9\% perfect run rate. \par
-Student Housing and its complex logic requirements caused a near-total collapse in functional accuracy. Across all models and prompts, the highest achieved success rate was only 33.3\%, with many configurations failing to produce a single logically correct run.
+Student Housing and its complex logic requirements caused a near-total collapse in functional accuracy. Across all models and prompts, the highest achieved success rate was only 33.3\%, with many configurations failing to produce even a single logically correct run.
 
 \subsubsection{Impact of Model Class}
 The performance relationship between models \textit{inverted} depending on the task. \par
@@ -102,7 +103,7 @@ Removing examples (ZeroShot) caused a sharp drop in accuracy from 88.9\% to 15.4
 The self-correction strategy (Reflexion) did not yield consistent improvements. For Flash, it reduced accuracy from 88.9\% to 61.5\% on the simple document. For Pro, it performed roughly equivalent to the Default strategy.
 
 \subsection{The Syntax-Logic Gap}
-A comparison between the syntax validity rates (Figure \ref{fig:syntax_reliability}) and logic accuracy rates (Figure \ref{fig:logic_reliability}) reveals a distinct degradation in performance as the evaluation becomes stricter. This is apparent if we isolate the complex Student Housing use case. While the Pro model generated valid syntax in $\approx$80\% of runs, only $\approx$25\% of those valid runs contained correct logic. The Flash model struggled at both levels, with low syntax validity (20\%) and zero functional correctness (0\%).
+A comparison between the syntax validity rates (Figure \ref{fig:syntax_reliability}) and logic accuracy rates (Figure \ref{fig:logic_reliability}) reveals a characteristic degradation of performance as the evaluation becomes harder. This becomes especially apparent if we isolate the (more complex) Student Housing use case. While the Pro model generated valid syntax in a satisfyingly high $\approx$80\% of runs, only $\approx$25\% of those valid runs contained correct logic. The Flash model, on the other hand, struggled at both levels, with low syntax validity (20\%) and zero functional correctness (0\%).
 
 \section{Overall Pipeline Reliability} 
 Beyond specific syntax and logic metrics, this section evaluates the system's viability as an end-to-end automated service. The analysis considers two perspectives: the operational stability of the pipeline and its reliability inside the broader context of this work, which is public service recommendations.

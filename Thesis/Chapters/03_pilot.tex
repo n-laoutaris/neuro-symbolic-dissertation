@@ -2,7 +2,7 @@
 This chapter details the design, implementation and experimental testing of a novel Neuro-Symbolic pipeline for modeling automating public service eligibility checks. The full implementation is made publicly available on GitHub \cite{repo}.
 
 \section{Overview}
-The proposed architecture addresses the limitations of "black-box" Large Language Models \cite{Lin2023Generating} by enforcing a strict separation between neural interpretation (extracting meaning from text) and symbolic execution (validating logic against data). \par
+The proposed architecture attempts to address the limitations of the "black-box" nature of Large Language Models, and the uncertainly that nature entails \cite{Lin2023Generating}, by enforcing a strict separation between neural interpretation (to extract meaning from text) and symbolic execution (to validate logic against data). \par
 The methodology is structured around a "Text-to-Graph-to-Logic" workflow. The system transforms unstructured administrative documents into formal Knowledge Graphs and executable SHACL shapes through a chain of intermediate structured representations. This design prioritizes explainability and determinism, ensuring that the final eligibility decision is derived from explicit, auditable rules rather than probabilistic approaches. \par
 This chapter is organized as follows: Section \ref{subsec:semantic_modelling} defines the semantic schemas that ground the system. Section \ref{subsec:pipeline} details the four-stage extraction and generation pipeline. Section \ref{subsec:validation_engine} describes the validation engine, and Section \ref{sec:experimental_design} outlines the experimental framework used to stress-test the system's capabilities through automated mutation testing.
 
@@ -16,25 +16,25 @@ The codebase follows a functional separation of concerns, organized into three d
 \begin{enumerate} 
     \item \textbf{The Core Logic Layer:} A modular custom Python library encapsulating the functional logic of the system. It contains the reusable logic, such as API communication, graph operations, parsing and testing utilities. It also contains the end-to-end extraction-generation workflow, dubbed the \textit{pipeline core}.
     \item \textbf{The Orchestration Layer:} An interactive Jupyter Notebook serves as the control interface. This layer manages the experimental loop, injects configuration variables into the core modules and handles exceptions without interrupting the iterative execution of experiments.
-    \item \textbf{The Persistence Layer:} To ensure auditability and reproducibility, the system employs a meticulous "Artifact Preservation" strategy. Every experimental run generates a dedicated directory locally, containing all intermediate outputs of the core pipeline. Furthermore, during testing, metrics and metadata are saved in a Master CSV file for post-hoc analysis.
+    \item \textbf{The Persistence Layer:} As explained already, auditability and reproducibility are crucial. For this reason, the system employs a meticulous artifact preservation strategy. Every experimental run generates a dedicated directory (locally), containing all intermediate outputs of the core pipeline. Furthermore, during testing, metrics and metadata are saved in a Master CSV file for post-hoc analysis.
 \end{enumerate}
 
 \subsubsection{Technologies and Libraries}
 The system combines standard Semantic Web technologies with modern Data Science tools:
 \begin{itemize} 
     \item \textbf{RDFLib:} Used for parsing, manipulating and serializing RDF graphs (in Turtle format), as well as executing local SPARQL queries.
-    \item \textbf{PySHACL:} The standard Python implementation of the SHACL validation engine, used to validate the LLM-generated shapes against the citizen data.
-    \item \textbf{Pydantic:} Employed for schema enforcement of the intermediate JSON representations. It ensures that the unstructured extractions from the LLM adhere to strict data types and structural constraints, acting as a structural "gatekeeper".
-    \item \textbf{Pandas:} Used for the post-hoc aggregation and analysis of the testing logs.
+    \item \textbf{PySHACL:} The standard Python implementation of the SHACL validation engine. It is used to validate the LLM-generated shapes against citizen data.
+    \item \textbf{Pydantic:} Used for schema enforcement of the intermediate JSON representations, acting as a structural "gatekeeper". Its objects are sent to the LLM API, which in turn makes sure that the responses from the LLM adhere to strict data types and structural constraints.
+    \item \textbf{Pandas:} Used for the post-hoc data analysis of the testing logs.
     \item \textbf{Protégé:} An open-source ontology editor used for designing and consistency checking the domain-specific Schemas.
     \item \textbf{VOWL:} Utilized for the standardized visualization of the RDF Schemas, both during the conceptual design phase and the presentation of the work.
 \end{itemize}
 
 \subsection{Semantic Data Modeling} \label{subsec:semantic_modelling}
-This pipeline was designed specifically with public service documents in mind. To bridge the gap between unstructured administrative text and deterministic validation logic, two distinct semantic layers were defined. These schemas serve as the symbolic "grounding" for the Large Language Model.
+This pipeline was designed specifically with public service documents in mind. To make the transition from unstructured administrative text to deterministic validation logic, two distinct semantic layers were defined. These schemas serve as the symbolic "grounding" for the Large Language Model.
 
 \subsubsection{The Public Service Meta-Model} \label{subsec:service_schema}
-To ensure semantic interoperability and standardization, the modeling of the public service itself adheres to European formal vocabularies, specifically the \textit{Core Public Service Vocabulary Application Profile (CPSV-AP)} \cite{cpsv} and the \textit{Core Criterion and Core Evidence Vocabulary (CCCEV)} \cite{cccev}. The schema follows the following hierarchical structure, simplified in Figure \ref{fig:metamodel}: 
+The modeling of the public service draws components from European formal vocabularies, specifically the \textit{Core Public Service Vocabulary Application Profile (CPSV-AP)} \cite{cpsv} and the \textit{Core Criterion and Core Evidence Vocabulary (CCCEV)} \cite{cccev}. The schema follows the following hierarchical structure, simplified in Figure \ref{fig:metamodel}: 
 \begin{itemize} 
     \item \textbf{cpsv:PublicService}: The root node representing the public service itself. 
     \item \textbf{cccev:Constraint}: Connected to the root node via \texttt{cpsv:holdsRequirement}, these nodes represent individual preconditions extracted from the text. 
@@ -46,7 +46,7 @@ To ensure semantic interoperability and standardization, the modeling of the pub
     \caption{Simplified view of the Public Service Meta-Model}
     \label{fig:metamodel}
 \end{figure}
-The adoption of established EU standards is a deliberate architectural choice, made to ensure cross-border interoperability and extensibility \cite{Stani2020How}. By anchoring the pipeline's output in the CPSV-AP and CCCEV ecosystems, the generated graphs are compatible with the broader European e-Government infrastructure (such as the Single Digital Gateway). Furthermore, this modular design allows for future expansion where the pipeline could automatically ingest the full breadth of these ontologies (complex Evidence mappings, Agent definitions, Output representations), without requiring a fundamental restructuring of the core logic.
+The adoption of established EU standards is a deliberate architectural choice, made to allow for cross-border interoperability and extensibility \cite{Stani2020How}. By anchoring the pipeline's output in the CPSV-AP and CCCEV ecosystems, the generated graphs are compatible with the broader European e-Government infrastructure (such as the Single Digital Gateway). Furthermore, it is hoped that this modular design will allow for future expansion where the pipeline could automatically ingest the entirety of these ontologies (complex Evidence mappings, Agent definitions, Output representations), without requiring any restructuring of the core logic.
 
 \subsubsection{Citizen Schema} \label{subsec:citizen_schema}
 While the Public Service Meta-Model describes the \textit{rules}, the Citizen Schema describes the \textit{applicant}. This work utilizes a domain-specific \textit{Resource Description Framework Schema (RDFS)} \cite{rdfs} tailored to the requirements of each document and generated in a separate workflow (not presented here) by the same LLM used in the implementation of the rest of the pipeline. The model is instructed to use granular instead of aggregate data as nodes (e.g. prefer "Date of Birth" rather than "Age") and is encourgaed to use abstract and reusable classes. \par
@@ -70,7 +70,7 @@ The core contribution of this work is the following multi-stage, Neuro-Symbolic 
 The pipeline begins with the ingestion of the raw public service document (PDF). Using a Large Language Model, the unstructured text is processed to extract a summary of eligibility preconditions. The prompt is designed to filter out administrative noise and standardize the format of the rules. Since this is the first and most vital piece of information to be passed downstream, summarization is necessary as it reduces the cognitive load required for the subsequent logic generation steps.
 
 \subsubsection{Stage 2: Information Model Generation}
-In this critical neuro-symbolic step, the extracted preconditions are transformed into a structured JSON "Information Model". The Information Model organizes the unstructured list of rules into a strict hierarchy that mirrors the Meta-Model structure: 
+This is a criticalstep, and the first one that makes this pipeline "Neuro-Symbolic". Here, the extracted preconditions are transformed into a structured JSON "Information Model". The Information Model organizes the unstructured list of rules into a strict hierarchy that mirrors the Meta-Model structure:
 \begin{itemize} 
     \item \textbf{Constraints:} Each eligibility rule is encapsulated as a Constraint object, containing the natural language description of the rule. 
     \item \textbf{Information Concepts:} Nested within each Constraint are the abstract Information Concepts, representing the specific pieces of evidence or data required to evaluate that rule. 
@@ -138,12 +138,12 @@ The engine operates on two distinct RDF graphs:
 For the Execution and Reasoning step, the system utilizes PySHACL, a Python-based implementation of the W3C SHACL standard, to perform the validation. The execution follows a standard protocol: 
 \begin{itemize} 
     \item \textbf{Targeting:} The engine identifies the "Focus Node" in the Data Graph (defined during Stage 4 as the sole instance of the class \texttt{:Applicant}). 
-    \item \textbf{Constraint Evaluation:} For every Shape mapped to the Applicant, the engine evaluates the corresponding logic. Simple property shapes are validated via graph traversal, while complex conditions trigger the execution of the embedded SPARQL queries against the Data Graph. 
+    \item \textbf{Constraint Evaluation:} The engine evaluates the logic that corresponds to every Shape mapped to the Applicant. Simple property shapes are validated via graph traversal. Complex conditions trigger the execution of the embedded SPARQL queries against the Data Graph.
     \item \textbf{Entailment:} The engine operates under the RDFS entailment regime, allowing it to infer class hierarchies (e.g., understanding that a \texttt{:Child} is also a \texttt{:Person}) during validation.
 \end{itemize}
 The output of the engine is a formal \textit{Validation Report Graph} adhering to the SHACL standard. This report provides as output: 
 \begin{enumerate} 
-    \item \textbf{Boolean Conformance:} A global \texttt{sh:conforms} value (True/False), which serves as the system's final decision on eligibility. 
+    \item \textbf{Boolean Conformance:} A \texttt{sh:conforms} value (can be either True or False). This serves as the system's final decision on eligibility.
     \item \textbf{Violation Details:} A set of \texttt{sh:ValidationResult} nodes in cases of non conformance. Each one links to the specific Shape that failed and includes the generated error message, providing explanation for the rejection.
 \end{enumerate}
 
@@ -164,14 +164,14 @@ The execution of these runs is done in The Orchestration Layer (see Section \ref
 \end{enumerate}
 
 \subsection{The Mutation Testing Framework}
-To evaluate the functional correctness of the generated SHACL shapes, the system implements a Mutation Testing Framework. Mutation testing is a methodology that has matured and gained popularity in evaluating test suites and supporting experimentation \cite{Papadakis2019Chapter}. Unlike traditional unit tests that might check for static string matches, this framework dynamically generates RDF graph instances to test whether the generated logic correctly distinguishes between eligible and ineligible applicants. The framework operates on a "Baseline and Perturbation" model, consisting of the components analyzed below.
+The functional correctness of the generated SHACL shapes certainly needs to be evaluated in a quantifiable manner. For this task, the system implements a Mutation Testing Framework. Mutation testing is a methodology that has matured and gained popularity in evaluating test suites and supporting experimentation \cite{Papadakis2019Chapter}. Unlike traditional unit tests that might check for static string matches, this framework dynamically generates RDF graph instances to test whether the generated logic correctly distinguishes between eligible and ineligible applicants. The framework operates on a "Baseline and Perturbation" model, consisting of the components analyzed below.
 
 \subsubsection{The "Golden Citizen" Baseline} \label{subsec:golden_citizen}
 For each public service document, a single, syntactically perfect RDF graph termed the \textit{Golden Citizen} is manually constructed. This data instance represents an applicant who satisfies \textit{all} eligibility preconditions. This baseline graph is constructed to adhere strictly to the corresponding Citizen Schema of each document. The data values are calibrated to demonstrate marginal eligibility (e.g., if an income upper limit is €12,000, the Golden Citizen might have €11,999). This ensures that the testing framework evaluates the precision of the logic, not just its general functionality. \par
 The full \texttt{ttl} files of these hand-crafted instance graphs are found along with their RDFS files in Appendix \ref{app:citizen_schemata}.
 
 \subsubsection{Scenarios} 
-The test cases (Scenarios) are defined in a declarative YAML configuration file. Each entry in this file represents a distinct Scenario, designed to isolate and test a specific logical constraint found in the document. A Scenario definition includes:
+The test cases (Scenarios) are defined in a declarative YAML configuration file. The file contains YAML descriptions of distinct Scenarios, each designed to test a specific logical constraint found in the document, if possible, in isolation. A Scenario definition includes:
 \begin{enumerate}
     \item \textbf{Expected Violation Count:} The ground truth for the test. A compliant scenario expects 0 violations, a failure scenario typically expects 1.
     \item \textbf{Mutation Actions:} A set of instructions to alter ("mutate") the Golden Citizen.
@@ -238,7 +238,7 @@ Figure \ref{fig:parental_leave_schema} shows a visualization of the Citizen Sche
 The experiment uses two of the models in the Google Gemini 2.5 family, to evaluate the trade-off between reasoning capability and computational efficiency. 
 \begin{itemize} 
     \item \textbf{Gemini 2.5 Pro:} The high-parameter "reasoning" model. It is hypothesized to excel at complex SPARQL generation and abstracting vague requirements into formal logic, potentially at the cost of higher latency. 
-    \item \textbf{Gemini 2.5 Flash:} The lightweight, low-latency model. It serves to test the feasibility of a "high-throughput" pipeline. A key research question is whether this smaller model can adhere to the strict SPARQL syntax requirements without the deep reasoning capabilities of the Pro variant.
+    \item \textbf{Gemini 2.5 Flash:} The lightweight, low-latency model. It was chosen to test the feasibility of a "high-throughput" pipeline. Another question is whether this smaller model might be able to adhere to the strict SPARQL syntax requirements without the (theoretically) broader capabilities of its Pro sibling.
 \end{itemize}
 
 \subsubsection{Prompting Strategies} 
@@ -274,24 +274,24 @@ This configuration evaluates the efficacy of self-correction mechanisms in code 
 To move beyond qualitative observation, the experimental framework was designed in such a way to capture a granular dataset for every execution cycle. This data collection strategy was designed to decouple structural failures (code that does not compile) from logical failures (code that compiles but yields incorrect decisions), enabling a multi-dimensional analysis of pipeline performance.
 
 \subsubsection{Data Collection} 
-For every experimental run, the system persists a dataset that captures the complete state of the pipeline at the moment of execution, categorized into five distinct dimensions:
+Each run generates and saves a dataset that captures the complete state of the pipeline at the moment of execution, categorized into five dimensions:
 \begin{itemize} 
-    \item \textbf{Configuration Metadata:} Contextual fields regarding a unique Run ID, timestamp, the specific document input, the LLM employed and the active prompting strategy. 
-    \item \textbf{Artifact Fingerprinting:} To track the stability and uniqueness of the LLM's output, the system computes and logs the cryptographic hashes (MD5) of the generated graphs. This allows for the detection of potentially identical artifacts generated across different runs.
-    \item \textbf{Syntactic Integrity Verification:} Before execution, the system first verifies if the generated text is a valid RDF/Turtle graph (parsable by RDFLib), and secondly, it performs a "deep compile" check on every embedded SPARQL constraint to ensure the query syntax adheres to the SPARQL standard. Both errors, if they occur, are flagged differently to be distinguishable.
+    \item \textbf{Configuration Metadata:} Contextual fields containing the unique Run ID, a timestamp, the document used as inout, the LLM employed and the active prompting strategy.
+    \item \textbf{Artifact Fingerprinting:} An initial effort to track the stability and uniqueness of the LLM's output. The system computes the cryptographic hashes (MD5) of the generated graphs. This allows for the detection of potentially identical artifacts generated across different runs.
+    \item \textbf{Syntactic Verification:} Before execution, the system first verifies if the generated text is a valid RDF/Turtle graph (valid here means parsable by RDFLib). Then, it performs a "deep compile" check on every SPARQL query embedded in SHACK shapes, to ensure the syntax adheres to the SPARQL standard. Those errors, should they occur, are flagged differently to be distinguishable.
     \item \textbf{Validation Outcome Metrics:} The raw output of the validation engine is captured in detail. This includes the Actual Violation Count, the Expected Violation Count (derived from the scenario definition) and a serialized list of the specific Violated Shapes and their associated error messages. These fields enable the calculation of granular error metrics beyond simple binary accuracy. 
     \item \textbf{Operational Diagnostics:} To monitor system health, metrics such as end-to-end Execution Time (latency) and Runtime Error Messages (e.g., Python exceptions) are logged. These fields are critical for quantifying the operational stability of components such as the external API.
 \end{itemize}
 At this point it is important to note that while the Information Model JSON generated in Stage 2 is structurally enforced by Pydantic, its logical accuracy is not measured independently. Instead, in the spirit of this study's end-to-end validation strategy, any logical errors or semantic misalignments occurring during the information extraction phase are allowed to propagate downstream, where they are eventually surfaced by the mutation testing of the SHACL shapes.
 
 \subsubsection{Performance Indicators} 
-The analysis of this dataset focuses on two primary dimensions of success.
+The analysis of the persisted dataset focuses on two definitions of success.
 
 \paragraph{Syntactic Validity} 
 The first hurdle for any code-generating system is the production of executable syntax \cite{chen2021evaluatinglargelanguagemodels}. This metric quantifies the percentage of runs where the LLM produced a \texttt{.ttl} file that could be successfully parsed by the RDFLib graph library \textit{and} whose embedded SPARQL queries could be compiled without error. A run that fails this check is distinguished from runs that simply produce incorrect logic.
 
 \paragraph{Functional Logic Accuracy} 
-For runs that pass the syntax check, the focus shifts to logical fidelity. This is measured by comparing the system's eligibility decision against the known ground truth of the mutation scenarios. By treating the validation outcome as a binary classification task, where a "Conformance" is the Positive class and "Violation" is the Negative class, standard machine learning metrics can be calculated.
+For runs that pass the syntax check, the focus shifts to logical fidelity. Indeed, it would hold no meaning to check for logic inside a code that does not even compile or in a structure that is unparseable. Accuracy is measured by comparing the final boolean eligibility decision made by the system, against the known truth hardcoded inside the mutation scenarios. We are basically treating the validation outcome as a binary classification task. For our context, if we theorize that a "Conformance" is the Positive class and "Violation" is the Negative class, standard machine learning metrics can be calculated.
 
 \section{Conclusion} 
 This chapter has detailed the architectural and experimental foundations of the Neuro-Symbolic pipeline. By combining a schema-grounded generation process with a deterministic mutation testing framework, the system is designed to provide a quantifiable evaluation of LLM capabilities in the context of this task. The following chapter presents the results of these experiments, analyzing the pipeline's performance across the afformentioned dimensions.
