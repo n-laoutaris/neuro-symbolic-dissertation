@@ -57,7 +57,7 @@ It has been demonstrated that the generation of such schemas can be automated as
 \end{enumerate}
 Visualizations of the Schemas created for each document use case can be found in Section \ref{subsec:document_corpora}, while the full \texttt{ttl} files of the schemas created can be found in Appendix \ref{app:citizen_schemata}.
 
-\subsection{The Extraction and Generation Pipeline} \label{subsec:pipeline}
+\subsection{The Extraction \& Generation Pipeline} \label{subsec:pipeline}
 The core contribution of this work is the following multi-stage, Neuro-Symbolic pipeline. The process follows a sequential data flow, depicted in Figure \ref{fig:pipeline}, consisting of four primary stages.
 \begin{figure}[htbp]
     \centering
@@ -271,7 +271,7 @@ Listing \ref{lst:reflexion-prompt} shows an excerpt of the reflexion prompt.
 ]{Snippets/reflexion.txt}
 This configuration evaluates the efficacy of self-correction mechanisms in code generation, specifically testing whether the computational overhead of iterative refinement yields a statistically significant reduction in errors \cite{Liu2025InstructofReflection}.
 
-\subsection{Evaluation Metrics}
+\subsection{Evaluation Metrics} \label{subsec:metrics}
 To move beyond qualitative observation, the experimental framework was designed in such a way to capture a granular dataset for every execution cycle. This data collection strategy was designed to separate structural failures (code that does not compile) from logical failures (code that compiles but yields incorrect decisions), enabling a multi-dimensional analysis of the pipeline's performance.
 
 \subsubsection{Data Collection} 
