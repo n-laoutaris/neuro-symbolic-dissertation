@@ -24,7 +24,7 @@ Figure \ref{fig:double_counting} illustrates this. The traversal from Applicant 
 \subsubsection{The Cartesian Product Trap}
 A very similar "bug" with the previous one appeared when aggregating income. The model was observed to frequently join Income patterns and Child patterns in a single \texttt{WHERE} clause, without sub-query separation. This caused the SPARQL engine to generate a Cartesian product of the two datasets, effectively multiplying every income record by every child record. This resulted in erroneous rejections where families were flagged with violations due to massive over-estimations of total family incomes. A partial example of a wrong query generated to trigger the Catresian Product Trap can be seen in Listing \ref{lst:cartesian-trap}
 \lstinputlisting[
-    language=json, 
+    language=ttl, 
     caption={Generated query that contains the Cartesian Product Trap}, 
     label={lst:cartesian-trap}
 ]{Snippets/cartesian_trap.sql}

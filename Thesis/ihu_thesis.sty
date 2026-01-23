@@ -82,23 +82,73 @@
 \usepackage{listings}
 \usepackage{xcolor}
 % Custom definition for JSON language as it is not built-in to listings
-\lstdefinelanguage{json}{
+\lstdefinelanguage{plaintext}{
     basicstyle=\small\ttfamily,
     numbers=left,
     numberstyle=\tiny\color{gray},
+    commentstyle=\color{green!60!black},
     stepnumber=1,
     numbersep=10pt,
     showstringspaces=false,
     breaklines=true,
     frame=single,
-    backgroundcolor=\color{white},
     tabsize=2,
-    keywords={false,true,null},
-    morecomment=[s]{/*}{*/},
-    morecomment=[l]//,
-    morestring=[b]",
-    % Highlighting keys vs values is complex in listings, 
-    % so we keep it clean and academic.
+    morestring=[b]"
+}
+\lstdefinelanguage{ttl}{
+  keywords={a, rdf, rdfs, owl, xsd, dct, ex, cccev, cpsv, ns1, sh, 
+            SELECT,WHERE,FILTER,OPTIONAL,ASK,CONSTRUCT,DESCRIBE,COUNT,DISTINCT,
+            PREFIX,FROM,GRAPH,ORDER,BY,LIMIT,OFFSET,as,SUM,UNION,GROUP},
+  keywordstyle=\color{blue},
+  comment=[l]{\#},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{orange},
+  morestring=[b]",
+  moredelim=[s][\color{teal}]{<}{>},
+  basicstyle=\ttfamily\small,
+  sensitive=true,
+  numberstyle=\tiny\color{gray},
+  numbers=left,
+  stepnumber=1,
+  numbersep=10pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  tabsize=2
+}
+\lstdefinelanguage{pythons}{
+  language=Python,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{orange},
+  morestring=[s]{"""}{"""},
+  basicstyle=\ttfamily\small,
+  numberstyle=\tiny\color{gray},
+  numbers=left,
+  stepnumber=1,
+  numbersep=10pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  tabsize=2
+}
+\lstdefinelanguage{yaml}{
+  keywords={true,false,null},
+  keywordstyle=\color{blue},
+  comment=[l]{\#},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{orange},
+  morestring=[b]",
+  basicstyle=\ttfamily\small,
+  sensitive=true,
+  numberstyle=\tiny\color{gray},
+  numbers=left,
+  stepnumber=1,
+  numbersep=10pt,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  tabsize=2
 }
 
 % --- ESSENTIAL PACKAGES ---

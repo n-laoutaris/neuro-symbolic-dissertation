@@ -4,12 +4,13 @@ This chapter details the design, implementation and experimental testing of the 
 \section{Overview}
 The proposed architecture attempts to address the limitations of the "black-box" nature of Large Language Models, and the uncertainly that nature entails \cite{Lin2023Generating}, by enforcing a strict separation between neural interpretation (to extract meaning from text) and symbolic execution (to validate logic against data). \par
 The methodology is structured around a \textit{Text-to-Graph-to-Logic} workflow. The system transforms unstructured administrative documents into formal Knowledge Graphs and executable SHACL shapes through a chain of intermediate structured representations. This design prioritizes explainability and determinism, ensuring that the final eligibility decision is derived from explicit, auditable rules rather than probabilistic approaches. \par
-This chapter is organized as follows: Section \ref{subsec:semantic_modelling} defines the semantic schemas that ground the system. Section \ref{subsec:pipeline} details the four-stage extraction and generation pipeline. Section \ref{subsec:validation_engine} describes the validation engine, and Section \ref{sec:experimental_design} outlines the experimental framework used to stress-test the system's capabilities through automated mutation testing.
+This chapter is organized as follows: Sections \ref{subsec:setup_environment} and \ref{subsec:semantic_modelling} define the technological and semantic pre-requisites. Section \ref{subsec:pipeline} details the four-stage extraction and generation pipeline. Section \ref{subsec:validation_engine} describes the validation engine, and Section \ref{sec:experimental_design} is about the mutation testing experimental framework used to stress-test the system.
 
 \section{Methodology and System Architecture}
+This section presents the Neuro-Symbolic pipeline itself. It provides a high-level view of the end-to-end workflow, from the ingestion of unstructured documents to the generation of executable symbolic constraints through a sequence of neural and symbolic processing stages. The purpose of this section is to establish the architectural rationale and data flow underlying the pilot study, while detailed implementation choices are introduced in the subsequent subsections.
 
-\subsection{Setup Environment}
-The pipeline was implemented using Python 3.12.9, utilizing a modular architecture to separate core processing logic from experimental orchestration. The system relies on local processing for semantic graph operations and cloud-based APIs for interfacing with Large Language Models.
+\subsection{Setup Environment} \label{subsec:setup_environment}
+The pipeline was implemented using Python 3.12.9, taking care to separate core processing logic from experimental orchestration. The system relies on local processing for semantic graph operations and cloud-based APIs for interfacing with Large Language Models.
 
 \subsubsection{System Architecture} \label{subsec:system_architecture}
 The codebase follows a functional separation of concerns, organized into three distinct layers: 
@@ -49,7 +50,7 @@ The modeling of the public service draws components from European formal vocabul
 The adoption of established EU standards is a deliberate architectural choice, made to allow for cross-border interoperability and extensibility \cite{Stani2020How}. By anchoring the pipeline's output in the CPSV-AP and CCCEV ecosystems, the generated graphs are compatible with the broader European e-Government infrastructure (such as the Single Digital Gateway). Furthermore, it is hoped that this modular design will allow for future expansion where the pipeline could automatically ingest the entirety of these ontologies (complex Evidence mappings, Agent definitions, Output representations), without requiring any restructuring of the core logic.
 
 \subsubsection{Citizen Schema} \label{subsec:citizen_schema}
-If the Public Service Meta-Model describes the \textit{rules}, then the Citizen Schema describes the \textit{applicant}. This work utilizes a domain-specific \textit{Resource Description Framework Schema (RDFS)} \cite{rdfs} tailored to the requirements of each document and generated in a separate workflow (not presented here) by the same LLM used in the implementation of the rest of the pipeline. The model is instructed to use granular instead of aggregate data as nodes (e.g. prefer "Date of Birth" rather than "Age") and is encourgaed to use abstract and reusable classes. \par
+If the Public Service Meta-Model describes the \textit{rules}, then the Citizen Schema describes the \textit{applicant}. This work utilizes a domain-specific \textit{Resource Description Framework Schema (RDFS)} \cite{rdfs} tailored to the requirements of each document and generated in a separate workflow (not presented here) by the same LLM used in the implementation of the rest of the pipeline. The model is instructed to use granular instead of aggregate data as nodes (e.g. prefer "Date of Birth" over "Age") and is encourgaed to use abstract and reusable classes. \par
 It has been demonstrated that the generation of such schemas can be automated as part of the pipeline \cite{Konstantinidis2025}. However, for the scope of this pilot study, the Citizen Schema is treated as fixed input context. This choice serves two purposes: 
 \begin{enumerate} 
     \item \textbf{Experimental Control:} By fixing the target schema, we isolate the performance of the LLM in \textit{logic generation} (SHACL/SPARQL) and \textit{extraction}, without the confounding variable of schema generation errors.
@@ -79,13 +80,13 @@ Inferring these concepts from the list of preconditions is the main reasoning ta
 The resulting artifact effectively creates a \textit{blueprint} for downstream tasks. It contains all the necessary semantic links to be deterministically serialized into valid RDF triples in the subsequent stage, while ensuring that all data references are grounded in the controlled vocabulary of the Citizen Schema. \par
 Listing \ref{lst:json-model} provides an example snippet of the JSON Information Model, showing one constraint with its associated information concepts inside the \texttt{constrains} field, and the Citizen Schema nodes it maps to in the \texttt{related paths} field. Note the \texttt{desc} field for the natural language description of the precondition, as it was interpreted from the document by the LLM during Stage 1.
 \lstinputlisting[
-    language=json, 
+    language=plaintext, 
     caption={JSON Information Model snippet}, 
     label={lst:json-model}
 ]{Snippets/info_model.json}
 The structure of the output is strictly enforced using a \textit{Pydantic} schema definition. Pydantic is a data validation library for Python that enforces type hints at runtime. The Pydantic models are explicitly coded and passed to the LLM API as a structural constraint. The LLM is forced to restrict its token generation process to the exact structure defined by the Pydantic model. By enforcing a strict schema at the output, the system ensures that any structural hallucinations (malformed nested objects, incorrect data types) are \textit{intercepted} before they reach the RDF serialization logic. This choice provides a safety net that is often missing in monolithic LLM implementations. Listing \ref{lst:pydantic} is the Pydantic representation of the Information Model schema in the pipeline's core Python environment. \par
 \lstinputlisting[
-    language=json, 
+    language=pythons, 
     caption={Pydantic Model for Information Model Generation}, 
     label={lst:pydantic}
 ]{Snippets/pydantic.py}
@@ -93,16 +94,17 @@ The structure of the output is strictly enforced using a \textit{Pydantic} schem
 \subsubsection{Stage 3: Semantic Graph Construction}
 Once the Information Model is established, the system deterministically (via Python code) constructs two RDF artifacts without further LLM inference:
 \begin{enumerate} 
-    \item \textbf{The Service Graph:} A formal representation of the public service using the \textit{CPSV-AP} and \textit{CCCEV} vocabularies and following the Meta-Model schema defined in Section \ref{subsec:service_schema}.
-    \item \textbf{The Citizen-Service Graph:} By loading an \textit{Example Citizen} (a valid applicant instance), the system uses the Information Model to link the abstract Information Concepts from the Service Graph directly to the actual data nodes in the Citizen Graph via \texttt{ex:mapsTo} edges, completing the bridge. This unified graph serves as a visual audit trail, allowing human inspectors or automated agents to trace exactly which specific data points are being used to evaluate a specific constraint. 
+    \item \textbf{The Service Graph:} A formal representation of the public service using the \textit{CPSV-AP} and \textit{CCCEV} vocabularies and following the Meta-Model.
+    \item \textbf{The Citizen-Service Graph:} By loading an \textit{Example Citizen} (a valid applicant instance), the system uses the Information Model to link the abstract Information Concepts from the Service Graph directly to the actual data nodes in the Citizen Graph via \texttt{ex:mapsTo} edges, completing the bridge. This unified graph serves as a visual audit trail, allowing human inspectors or automated agents to trace exactly which specific data points are being used to evaluate a specific constraint. Figure \ref{fig:metamodel_with_citizen} expands upon the simplified view of the meta-model introduced in Section \ref{subsec:service_schema} to present the completed bridge. 
 \end{enumerate}
-Figure \ref{fig:metamodel_with_citizen} expands upon the simplified view of the meta-model introduced in Section \ref{subsec:service_schema} to present the completed bridge. \par
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{Images/metamodel_with_citizen.png}
     \caption{Simplified view of the Citizen-Service Graph blueprint}
     \label{fig:metamodel_with_citizen}
 \end{figure}
+
 Both Graphs are serialized using Turtle syntax \cite{turtle} and saved to file as artifacts. Interactive visualizations of them are generated using the \textit{PyVis} library and also saved to file as \texttt{html} files. Figure \ref{fig:citizen-service-example} shows a simplified view of a citizen-service graph as it was automatically produced by the pipeline. The yellow node is the \texttt{cpsv:PublicService} node, the red nodes are \texttt{cccev:Constraint} nodes, the blue nodes are \texttt{cccev:InformationConcept} nodes. These connect to the Citizen nodes (Green, the root, and grey, the properties) completing the Citizen-Service Graph. \par
 \begin{figure}[htbp]
     \centering
@@ -123,7 +125,7 @@ As a last addition, the LLM generates an error message for every shape, which is
 The output is a fully serialized \texttt{ttl} file containing the \texttt{sh:NodeShape} definitions. This file serves as the executable input for the Validation Engine, the mechanics of which are detailed in the next section. \par
 Listing \ref{lst:shacl-shape} shows a SHACL Shape and its embedded SPARQL query generated by this process. Specifically, it is the shape that corresponds to the constraint we showed in Listing \ref{lst:json-model} in its Information Model form. \par
 \lstinputlisting[
-    language=json, 
+    language=ttl, 
     caption={An example SHACL Shape generated by the pipeline}, 
     label={lst:shacl-shape}
 ]{Snippets/shacl-shape.ttl}
@@ -179,7 +181,7 @@ The test cases, dubbed \textit{Scenarios}, represent slight but critical alterat
 \end{enumerate}
 Listing \ref{lst:scenario-yaml} provides an example of one mutation scenario. The full list of scenarios used in this framework can be found in Appendix \ref{app:scenarios}.
 \lstinputlisting[
-    language=json, 
+    language=yaml, 
     caption={YAML description of a scenario}, 
     label={lst:scenario-yaml}
 ]{Snippets/scenario.yaml}
@@ -265,7 +267,7 @@ This strategy implements a \textit{Prompt Chaining} loop that has the following 
 \end{enumerate} 
 Listing \ref{lst:reflexion-prompt} shows an excerpt of the reflexion prompt.
 \lstinputlisting[
-    language=json, 
+    language=plaintext, 
     caption={Excerpt of the reflexion prompt}, 
     label={lst:reflexion-prompt}
 ]{Snippets/reflexion.txt}

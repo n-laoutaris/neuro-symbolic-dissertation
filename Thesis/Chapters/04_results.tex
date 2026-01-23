@@ -55,9 +55,9 @@ The Pro model demonstrated high reliability, achieving a 100\% success rate on t
 In contrast, the Flash model struggled significantly with maintaining syntactic precision. While it achieved moderate success on the simpler Parental Leave document (ranging from 50\% to 75\%), its performance collapsed on the complex Student Housing document, with success rates dropping as low as 5\% (Reflexion) to 20\% (Default).
 
 \subsubsection{Impact of Prompting Strategy} 
-The impact of prompting strategies varied by model architecture. \par
-For Flash, the \textit{Reflexion} strategy provided a significant boost on the simpler document (improving validity from 50\% to 75\%). However, this benefit vanished on the complex document, where Reflexion actually performed worse (5\%) than the Default prompt (20\%). \par
-For Pro, the \textit{Default} and \textit{Reflexion} strategies performed identically (80\% on Housing), while the \textit{ZeroShot} strategy resulted in a notable drop in stability (falling to 60\% on Housing). 
+The impact of prompting strategies were not consistent accross model architectures. \par
+For Flash, the \textit{Reflexion} strategy provided a significant boost on the simpler document (improving from 50\% to 75\%). On the more complex document, however, this benefit disappeared, where Reflexion performed worse (5\%) than the Default prompt (20\%). \par
+For Pro, we observed identical performance for the \textit{Default} and \textit{Reflexion} strategies (80\% on Housing), while the \textit{ZeroShot} strategy caused stability to drop significantly (falling to 60\% on Housing). 
 
 \subsection{Failure Mode Analysis} 
 To better understand the reasons behind failure, the invalid runs were categorized by error type: \textit{RDF Syntax Errors} (invalid Turtle file structure) and \textit{SPARQL Syntax Errors} (malformed queries within valid Turtle). Figure \ref{fig:error_analysis} presents the error rates normalized by the total number of runs for each model-document pair. 
