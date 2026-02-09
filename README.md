@@ -8,9 +8,9 @@ The system is evaluated for real-world feasibility under the use case of a *Publ
 ![Pipeline Flow-chart](./Thesis/Images/Pipeline.png)
 
 ## The Problem
-Public administration often seems like a bureaucratic maze. Citizens are legally entitled to various services and benefits to which they remain unaware, a significant accessibility gap that exists due to the complexity and fragmentation of the underlying legislation.
+Public administration often seems like a bureaucratic maze. Citizens are legally entitled to services and benefits to which they remain unaware, a gap that exists due to the complexity and fragmentation of the underlying legislation.
 
-This project approaches this real-world issue as a Data Science challenge. How do we make legal prose machine-readable and validate citizen data against it, without losing the mathematical certainty required for administrative acts? Current AI approaches rely on Large Language Models, which offer linguistic fluency but lack formality and certainly. In digital governance, a hallucination is a potentially catastrophic failure. This work argues that we must decouple interpretation (Neural) from execution (Symbolic) to ensure accountability.
+This project approaches this real-world issue as a Data Science challenge. How do we make legal prose machine-readable and validate citizen data against it, without losing mathematical certainty? Current AI approaches rely on Large Language Models, which offer linguistic fluency but lack formality and certainty. In digital governance, a hallucination is a potentially catastrophic failure. This work argues that we must decouple interpretation (Neural) from execution (Symbolic) to ensure accountability.
 
 ## Knowledge Sources & Data Models
 The project operates over a Semantic Web–based knowledge representation stack and uses:
