@@ -3,11 +3,9 @@
 
 cff-version: 1.2.0
 title: >-
-  Exploring Neuro-Symbolic Pipelines for Structured
-  Knowledge Extraction
+  Exploring Neuro-Symbolic Pipelines for Structured Knowledge Extraction
 message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
+  If you use this software, please cite it using the metadata from this file.
 type: software
 authors:
   - given-names: Nikolaos
