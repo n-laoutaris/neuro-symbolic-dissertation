@@ -3,7 +3,8 @@ This repository presents a *Neuro-Symbolic Text → Graph → Logic pipeline*, g
 A *custom Mutation Testing framework* is introduced to evaluate functional correctness, revealing that syntactically valid AI-generated rules frequently fail under controlled logical perturbations.
 The system is evaluated for real-world feasibility under the use case of a *Public Service Recommender System*.
 
-[Read the full written report here.](./Thesis/main.pdf) [See a short presentation here.](./Thesis/Presentation.pptx) 
+[Read the full written report here.](./Thesis/main.pdf)
+[Download a short presentation here.](./Thesis/Presentation.pptx) 
 
 ![Pipeline Flow-chart](./Thesis/Images/Pipeline.png)
 
