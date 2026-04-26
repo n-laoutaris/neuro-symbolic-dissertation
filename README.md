@@ -51,7 +51,7 @@ For digital governance systems, syntactic success is insufficient.  Symbolic val
 
 `Thesis:` Full LaTeX source code, images and bibliography for the dissertation report. Includes a compiled PDF.
 
-`src:` Core Python code for the execution of the pipeline pipeline, including local libraries for utility code.
+`src:` Core Python code for the execution of the pipeline, including local libraries for utility code.
 
 `Experimennt Cockpit.ipynb:` The primary interactive environment for pipeline iterations and mutation testing loops.
 
